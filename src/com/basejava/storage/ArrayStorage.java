@@ -1,25 +1,28 @@
+package com.basejava.storage;
+
+import com.basejava.model.Resume;
 import java.util.Arrays;
 
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10000];
+    private Resume[] storage = new Resume[10000];
     private int size;
 
-    void clear() {
+    public void clear() {
         Arrays.fill(storage, 0, size(), null);
         size = 0;
     }
 
-    void save(Resume resume) {
+    public void save(Resume resume) {
         storage[size] = resume;
         size++;
     }
 
-    Resume get(String uuid) {
+    public Resume get(String uuid) {
         for (Resume resume: getAll()) {
-            if (resume.uuid.equals(uuid)) {
+            if (resume.getUuid().equals(uuid)) {
                 return resume;
             }
         }
@@ -27,11 +30,11 @@ public class ArrayStorage {
         return null;
     }
 
-    void delete(String uuid) {
+    public void delete(String uuid) {
         int deletedIndex = -1;
 
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid)) {
                 deletedIndex = i;
                 break;
             }
@@ -53,11 +56,11 @@ public class ArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    Resume[] getAll() {
+    public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    int size() {
+    public int size() {
         return size;
     }
 }
