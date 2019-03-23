@@ -1,44 +1,43 @@
 package com.basejava.storage;
 
 import com.basejava.model.Resume;
+
 import java.util.Arrays;
 
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private int maxSize = 10000;
+    private static final int maxSize = 10000;
     private Resume[] storage = new Resume[maxSize];
     private int size;
 
     public void update(Resume resume) {
-        if (findResumeByUuid(resume.getUuid()) == null) {
-            printNotFound();
+        int resumeIndex = findResumeIndexByUuid(resume.getUuid());
+
+        if (resumeIndex == -1) {
+            System.out.println("Resume is not found");
             return;
         }
 
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(resume.getUuid())) {
-                storage[i] = resume;
-            }
-        }
+        storage[resumeIndex] = resume;
     }
 
     public void clear() {
-        Arrays.fill(storage, 0, size(), null);
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
     public void save(Resume resume) {
-        if (findResumeByUuid(resume.getUuid()) != null) {
-            printDuplicate();
+        int resumeIndex = findResumeIndexByUuid(resume.getUuid());
+
+        if (resumeIndex >= 0) {
+            System.out.println("Resume already exists");
             return;
         }
 
-        int currentSize = size;
-
-        if (++currentSize > maxSize) {
-            printOverflowMaxSize();
+        if (size == maxSize) {
+            System.out.println("Overflow the maximum storage size (" + maxSize + ")");
             return;
         }
 
@@ -47,29 +46,27 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        Resume resume = findResumeByUuid(uuid);
+        int resumeIndex = findResumeIndexByUuid(uuid);
 
-        if (resume == null) {
-            printNotFound();
+        if (resumeIndex == -1) {
+            System.out.println("Resume is not found");
             return null;
         }
 
-        return resume;
+        return storage[resumeIndex];
     }
 
     public void delete(String uuid) {
-        if (findResumeByUuid(uuid) == null) {
-            printNotFound();
+        int resumeIndex = findResumeIndexByUuid(uuid);
+
+        if (resumeIndex == -1) {
+            System.out.println("Resume is not found");
             return;
         }
 
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                storage[i] = storage[size - 1];
-                storage[size - 1] = null;
-                size--;
-            }
-        }
+        storage[resumeIndex] = storage[size - 1];
+        storage[size - 1] = null;
+        size--;
     }
 
     public Resume[] getAll() {
@@ -80,25 +77,13 @@ public class ArrayStorage {
         return size;
     }
 
-    private void printNotFound() {
-        System.out.println("Resume is not found");
-    }
-
-    private void printDuplicate() {
-        System.out.println("Resume already exists");
-    }
-
-    private void printOverflowMaxSize() {
-        System.out.println("Overflow the maximum storage size (" + maxSize + ")");
-    }
-
-    private Resume findResumeByUuid(String uuid) {
-        for (Resume resume: getAll()) {
-            if (resume.getUuid().equals(uuid)) {
-                return resume;
+    private int findResumeIndexByUuid(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
             }
         }
 
-        return null;
+        return -1;
     }
 }
