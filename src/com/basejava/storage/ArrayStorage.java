@@ -8,12 +8,12 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private static final int maxSize = 10000;
-    private Resume[] storage = new Resume[maxSize];
+    private static final int MAX_SIZE = 10000;
+    private Resume[] storage = new Resume[MAX_SIZE];
     private int size;
 
     public void update(Resume resume) {
-        int resumeIndex = findResumeIndexByUuid(resume.getUuid());
+        int resumeIndex = findIndex(resume.getUuid());
 
         if (resumeIndex == -1) {
             System.out.println("Resume is not found");
@@ -29,15 +29,15 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
-        int resumeIndex = findResumeIndexByUuid(resume.getUuid());
+        int resumeIndex = findIndex(resume.getUuid());
 
         if (resumeIndex >= 0) {
             System.out.println("Resume already exists");
             return;
         }
 
-        if (size == maxSize) {
-            System.out.println("Overflow the maximum storage size (" + maxSize + ")");
+        if (size == MAX_SIZE) {
+            System.out.println("Overflow the maximum storage size (" + MAX_SIZE + ")");
             return;
         }
 
@@ -46,7 +46,7 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        int resumeIndex = findResumeIndexByUuid(uuid);
+        int resumeIndex = findIndex(uuid);
 
         if (resumeIndex == -1) {
             System.out.println("Resume is not found");
@@ -57,7 +57,7 @@ public class ArrayStorage {
     }
 
     public void delete(String uuid) {
-        int resumeIndex = findResumeIndexByUuid(uuid);
+        int resumeIndex = findIndex(uuid);
 
         if (resumeIndex == -1) {
             System.out.println("Resume is not found");
@@ -77,7 +77,7 @@ public class ArrayStorage {
         return size;
     }
 
-    private int findResumeIndexByUuid(String uuid) {
+    private int findIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
