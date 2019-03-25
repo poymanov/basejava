@@ -2,28 +2,10 @@ package com.basejava.storage;
 
 import com.basejava.model.Resume;
 
-import java.util.Arrays;
-
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage extends AbstractArrayStorage {
-
-    public void update(Resume resume) {
-        int resumeIndex = findIndex(resume.getUuid());
-
-        if (resumeIndex == -1) {
-            System.out.println("Resume is not found");
-            return;
-        }
-
-        storage[resumeIndex] = resume;
-    }
-
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
 
     public void save(Resume resume) {
         int resumeIndex = findIndex(resume.getUuid());
@@ -53,10 +35,6 @@ public class ArrayStorage extends AbstractArrayStorage {
         storage[resumeIndex] = storage[size - 1];
         storage[size - 1] = null;
         size--;
-    }
-
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
     }
 
     protected int findIndex(String uuid) {
