@@ -14,18 +14,16 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void addResume(Resume resume) {
-        int searchResult = Arrays.binarySearch(storage, 0, size, resume);
-        int index = Math.abs(searchResult) - 1;
-
-        System.arraycopy(storage, index, storage, index + 1, size);
+    protected void addResume(Resume resume, int index) {
+        index = -index - 1;
+        System.arraycopy(storage, index, storage, index + 1, size - index);
         storage[index] = resume;
         size++;
     }
 
     @Override
-    protected void removeResume(int resumeIndex) {
-        System.arraycopy(storage, resumeIndex + 1, storage, resumeIndex, size);
+    protected void removeResume(int index) {
         size--;
+        System.arraycopy(storage, index + 1, storage, index, size - index);
     }
 }
