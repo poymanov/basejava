@@ -8,6 +8,14 @@ public class Resume implements Comparable<Resume> {
     // Unique identifier
     private String uuid;
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -21,14 +29,6 @@ public class Resume implements Comparable<Resume> {
     @Override
     public int hashCode() {
         return uuid.hashCode();
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     @Override

@@ -18,7 +18,6 @@ public class MainTestSortedArrayStorage {
         ARRAY_STORAGE.save(r3);
         ARRAY_STORAGE.save(r2);
         ARRAY_STORAGE.save(r1);
-
         printAll();
 
         ARRAY_STORAGE.delete(r1.getUuid());
