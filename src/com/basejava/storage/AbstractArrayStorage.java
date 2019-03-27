@@ -39,6 +39,7 @@ public abstract class AbstractArrayStorage implements Storage {
         }
 
         addResume(resume, resumeIndex);
+        size++;
     }
 
     public Resume get(String uuid) {
@@ -61,6 +62,8 @@ public abstract class AbstractArrayStorage implements Storage {
         }
 
         removeResume(resumeIndex);
+        storage[size - 1] = null;
+        size--;
     }
 
     public Resume[] getAll() {
@@ -69,14 +72,6 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public int size() {
         return size;
-    }
-
-    public void increaseSize() {
-        size++;
-    }
-
-    public void reduceSize() {
-        size--;
     }
 
     private boolean isExists(int index) {
