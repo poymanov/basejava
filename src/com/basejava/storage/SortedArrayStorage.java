@@ -23,7 +23,12 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void removeResume(int index) {
-        size--;
-        System.arraycopy(storage, index + 1, storage, index, size - index);
+        if (index + 1 >= size) {
+            storage[index] = null;
+            size--;
+        } else {
+            size--;
+            System.arraycopy(storage, index + 1, storage, index, size - index);
+        }
     }
 }
