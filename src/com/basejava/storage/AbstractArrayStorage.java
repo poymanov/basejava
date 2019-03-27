@@ -1,5 +1,8 @@
 package com.basejava.storage;
 
+import com.basejava.exceptions.ExistedStorageException;
+import com.basejava.exceptions.NotExistedStorageException;
+import com.basejava.exceptions.StorageException;
 import com.basejava.model.Resume;
 
 import java.util.Arrays;
@@ -13,8 +16,7 @@ public abstract class AbstractArrayStorage implements Storage {
         int resumeIndex = findIndex(resume.getUuid());
 
         if (!isExists(resumeIndex)) {
-            System.out.println("Resume is not found");
-            return;
+            throw new NotExistedStorageException(resume.getUuid());
         }
 
         storage[resumeIndex] = resume;
@@ -29,13 +31,11 @@ public abstract class AbstractArrayStorage implements Storage {
         int resumeIndex = findIndex(resume.getUuid());
 
         if (isExists(resumeIndex)) {
-            System.out.println("Resume already exists");
-            return;
+            throw new ExistedStorageException(resume.getUuid());
         }
 
         if (size == MAX_SIZE) {
-            System.out.println("Overflow the maximum storage size (" + MAX_SIZE + ")");
-            return;
+            throw new StorageException("Overflow the maximum storage size (" + MAX_SIZE + ")", resume.getUuid());
         }
 
         addResume(resume, resumeIndex);
@@ -46,8 +46,7 @@ public abstract class AbstractArrayStorage implements Storage {
         int resumeIndex = findIndex(uuid);
 
         if (!isExists(resumeIndex)) {
-            System.out.println("Resume is not found");
-            return null;
+            throw new NotExistedStorageException(uuid);
         }
 
         return storage[resumeIndex];
@@ -57,8 +56,7 @@ public abstract class AbstractArrayStorage implements Storage {
         int resumeIndex = findIndex(uuid);
 
         if (!isExists(resumeIndex)) {
-            System.out.println("Resume is not found");
-            return;
+            throw new NotExistedStorageException(uuid);
         }
 
         removeResume(resumeIndex);
