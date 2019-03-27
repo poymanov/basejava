@@ -71,6 +71,14 @@ public abstract class AbstractArrayStorage implements Storage {
         return size;
     }
 
+    public void increaseSize() {
+        size++;
+    }
+
+    public void reduceSize() {
+        size--;
+    }
+
     private boolean isExists(int index) {
         return index >= 0;
     }
