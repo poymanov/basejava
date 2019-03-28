@@ -89,7 +89,7 @@ public abstract class AbstractArrayStorageTest {
     @Test
     public void deleteNotExisted() {
         assertThrows(NotExistedStorageException.class, () -> {
-            storage.get("dummy");
+            storage.delete("dummy");
         });
     }
 
