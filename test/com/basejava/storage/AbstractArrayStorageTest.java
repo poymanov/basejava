@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractArrayStorageTest {
     private final Storage storage;
 
-    private static final Resume resume1 = new Resume("uuid1");
-    private static final Resume resume2 = new Resume("uuid2");
-    private static final Resume resume3 = new Resume("uuid3");
+    private static final Resume RESUME_1 = new Resume("uuid1");
+    private static final Resume RESUME_2 = new Resume("uuid2");
+    private static final Resume RESUME_3 = new Resume("uuid3");
 
     protected AbstractArrayStorageTest(Storage storage) {
         this.storage = storage;
@@ -23,9 +23,9 @@ public abstract class AbstractArrayStorageTest {
     @BeforeEach
     void setUp() {
         storage.clear();
-        storage.save(resume1);
-        storage.save(resume2);
-        storage.save(resume3);
+        storage.save(RESUME_1);
+        storage.save(RESUME_2);
+        storage.save(RESUME_3);
     }
 
     @Test
@@ -59,7 +59,7 @@ public abstract class AbstractArrayStorageTest {
     void saveOverflowError() {
         storage.clear();
 
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < AbstractArrayStorage.MAX_SIZE; i++) {
             storage.save(new Resume());
         }
 
@@ -85,7 +85,7 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     void get() {
-        assertEquals(resume1, storage.get("uuid1"));
+        assertEquals(RESUME_1, storage.get("uuid1"));
     }
 
     @Test
@@ -97,17 +97,17 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     void delete() {
-        storage.delete(resume1.getUuid());
+        storage.delete(RESUME_1.getUuid());
         assertEquals(2, storage.size());
 
         assertThrows(NotExistedStorageException.class, () -> {
-            storage.get(resume1.getUuid());
+            storage.get(RESUME_1.getUuid());
         });
     }
 
     @Test
     void getAll() {
-        assertArrayEquals(new Resume[]{resume1, resume2, resume3}, storage.getAll());
+        assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAll());
     }
 
     @Test
