@@ -31,13 +31,14 @@ public abstract class AbstractArrayStorageTest {
     @Test
     public void updateNotExisted() {
         assertThrows(NotExistedStorageException.class, () -> {
-            storage.get("dummy");
+            storage.update(new Resume("dummy"));
         });
     }
 
     @Test
     public void update() {
         Resume uuid4 = new Resume("uuid1");
+        storage.update(uuid4);
         assertEquals(uuid4, storage.getAll()[0]);
     }
 
