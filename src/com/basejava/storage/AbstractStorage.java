@@ -45,8 +45,6 @@ public abstract class AbstractStorage implements Storage {
         removeItem(resumeIndex);
     }
 
-    protected abstract boolean isExists(int index);
-
     protected abstract int findIndex(String uuid);
 
     protected abstract void updateItem(int index, Resume resume);
@@ -56,4 +54,8 @@ public abstract class AbstractStorage implements Storage {
     protected abstract Resume getItem(int index);
 
     protected abstract void removeItem(int index);
+
+    private boolean isExists(int index) {
+        return index >= 0;
+    }
 }

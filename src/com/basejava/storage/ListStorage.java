@@ -9,16 +9,6 @@ public class ListStorage extends AbstractStorage {
     protected List<Resume> storage = new ArrayList<Resume>();
 
     @Override
-    protected boolean isExists(int index) {
-        try {
-            storage.get(index);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
     protected int findIndex(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).getUuid().equals(uuid)) {
@@ -56,12 +46,6 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public Resume[] getAll() {
-        Resume[] data = new Resume[storage.size()];
-
-        for (int i = 0; i < storage.size(); i++) {
-            data[i] = storage.get(i);
-        }
-
-        return data;
+        return storage.toArray(new Resume[0]);
     }
 }

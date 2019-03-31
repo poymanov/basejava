@@ -23,10 +23,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected boolean isExists(int index) {
-        return index >= 0;
-    }
-
     protected void updateItem(int index, Resume resume) {
         storage[index] = resume;
     }
