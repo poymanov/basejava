@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractArrayStorageTest {
-    private final Storage storage;
+    private final AbstractArrayStorage storage;
 
     private static final Resume RESUME_1 = new Resume("uuid1");
     private static final Resume RESUME_2 = new Resume("uuid2");
     private static final Resume RESUME_3 = new Resume("uuid3");
 
-    protected AbstractArrayStorageTest(Storage storage) {
+    protected AbstractArrayStorageTest(AbstractArrayStorage storage) {
         this.storage = storage;
     }
 

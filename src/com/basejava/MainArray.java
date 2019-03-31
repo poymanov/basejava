@@ -1,6 +1,8 @@
 package com.basejava;
 
 import com.basejava.model.Resume;
+import com.basejava.storage.AbstractArrayStorage;
+import com.basejava.storage.AbstractStorage;
 import com.basejava.storage.ArrayStorage;
 import com.basejava.storage.Storage;
 
@@ -13,7 +15,7 @@ import java.io.InputStreamReader;
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static Storage ARRAY_STORAGE = new ArrayStorage();
+    private final static AbstractArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
