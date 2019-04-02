@@ -9,7 +9,7 @@ public class ListStorage extends AbstractStorage {
     protected List<Resume> storage = new ArrayList<Resume>();
 
     @Override
-    protected Object findIndex(Object uuid) {
+    protected Integer findIndex(Object uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).getUuid().equals(uuid.toString())) {
                 return i;

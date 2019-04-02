@@ -9,8 +9,8 @@ public class MapStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected Object findIndex(Object uuid) {
-        return uuid;
+    protected String findIndex(Object uuid) {
+        return uuid.toString();
     }
 
     @Override
