@@ -45,10 +45,6 @@ public abstract class AbstractStorage implements Storage {
         removeItem(resumeIndex);
     }
 
-    protected int convertIndexType(String index) {
-        return Integer.valueOf(index);
-    }
-
     protected abstract Object findIndex(Object uuid);
 
     protected abstract void updateItem(Object index, Resume resume);
