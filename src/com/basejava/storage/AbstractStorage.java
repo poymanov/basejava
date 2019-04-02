@@ -6,7 +6,7 @@ import com.basejava.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
     public void update(Resume resume) {
-        String resumeIndex = findIndex(resume.getUuid());
+        Object resumeIndex = findIndex(resume.getUuid());
 
         if (!isExists(resumeIndex)) {
             throw new NotExistedStorageException(resume.getUuid());
@@ -16,7 +16,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public void save(Resume resume) {
-        String resumeIndex = findIndex(resume.getUuid());
+        Object resumeIndex = findIndex(resume.getUuid());
 
         if (isExists(resumeIndex)) {
             throw new ExistedStorageException(resume.getUuid());
@@ -26,7 +26,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public Resume get(String uuid) {
-        String resumeIndex = findIndex(uuid);
+        Object resumeIndex = findIndex(uuid);
 
         if (!isExists(resumeIndex)) {
             throw new NotExistedStorageException(uuid);
@@ -36,7 +36,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public void delete(String uuid) {
-        String resumeIndex = findIndex(uuid);
+        Object resumeIndex = findIndex(uuid);
 
         if (!isExists(resumeIndex)) {
             throw new NotExistedStorageException(uuid);
@@ -49,15 +49,15 @@ public abstract class AbstractStorage implements Storage {
         return Integer.valueOf(index);
     }
 
-    protected abstract String findIndex(String uuid);
+    protected abstract Object findIndex(Object uuid);
 
-    protected abstract void updateItem(String index, Resume resume);
+    protected abstract void updateItem(Object index, Resume resume);
 
-    protected abstract void addItem(String index, Resume resume);
+    protected abstract void addItem(Object index, Resume resume);
 
-    protected abstract Resume getItem(String index);
+    protected abstract Resume getItem(Object index);
 
-    protected abstract void removeItem(String index);
+    protected abstract void removeItem(Object index);
 
-    protected abstract boolean isExists(String index);
+    protected abstract boolean isExists(Object index);
 }
