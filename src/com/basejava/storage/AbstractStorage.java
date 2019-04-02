@@ -6,7 +6,7 @@ import com.basejava.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
     public void update(Resume resume) {
-        int resumeIndex = findIndex(resume.getUuid());
+        String resumeIndex = findIndex(resume.getUuid());
 
         if (!isExists(resumeIndex)) {
             throw new NotExistedStorageException(resume.getUuid());
@@ -16,7 +16,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public void save(Resume resume) {
-        int resumeIndex = findIndex(resume.getUuid());
+        String resumeIndex = findIndex(resume.getUuid());
 
         if (isExists(resumeIndex)) {
             throw new ExistedStorageException(resume.getUuid());
@@ -26,7 +26,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public Resume get(String uuid) {
-        int resumeIndex = findIndex(uuid);
+        String resumeIndex = findIndex(uuid);
 
         if (!isExists(resumeIndex)) {
             throw new NotExistedStorageException(uuid);
@@ -36,7 +36,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public void delete(String uuid) {
-        int resumeIndex = findIndex(uuid);
+        String resumeIndex = findIndex(uuid);
 
         if (!isExists(resumeIndex)) {
             throw new NotExistedStorageException(uuid);
@@ -45,17 +45,19 @@ public abstract class AbstractStorage implements Storage {
         removeItem(resumeIndex);
     }
 
-    protected abstract int findIndex(String uuid);
-
-    protected abstract void updateItem(int index, Resume resume);
-
-    protected abstract void addItem(int index, Resume resume);
-
-    protected abstract Resume getItem(int index);
-
-    protected abstract void removeItem(int index);
-
-    private boolean isExists(int index) {
-        return index >= 0;
+    protected int convertIndexType(String index) {
+        return Integer.valueOf(index);
     }
+
+    protected abstract String findIndex(String uuid);
+
+    protected abstract void updateItem(String index, Resume resume);
+
+    protected abstract void addItem(String index, Resume resume);
+
+    protected abstract Resume getItem(String index);
+
+    protected abstract void removeItem(String index);
+
+    protected abstract boolean isExists(String index);
 }

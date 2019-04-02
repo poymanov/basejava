@@ -6,37 +6,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
-    protected Map<Integer, Resume> storage = new HashMap<>();
+    protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected int findIndex(String uuid) {
-        for (Map.Entry<Integer, Resume> entry : storage.entrySet()) {
-            if (entry.getValue().getUuid().equals(uuid)) {
-                return entry.getKey();
-            }
-        }
-
-        return -1;
+    protected String findIndex(String uuid) {
+        return uuid;
     }
 
     @Override
-    protected void updateItem(int index, Resume resume) {
+    protected void updateItem(String index, Resume resume) {
         storage.put(index, resume);
     }
 
     @Override
-    protected void addItem(int index, Resume resume) {
-        storage.put(storage.size(), resume);
+    protected void addItem(String index, Resume resume) {
+        storage.put(index, resume);
     }
 
     @Override
-    protected Resume getItem(int index) {
+    protected Resume getItem(String index) {
         return storage.get(index);
     }
 
     @Override
-    protected void removeItem(int index) {
+    protected void removeItem(String index) {
         storage.remove(index);
+    }
+
+    @Override
+    protected boolean isExists(String index) {
+        return storage.containsKey(index);
     }
 
     @Override

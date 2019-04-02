@@ -8,23 +8,27 @@ import com.basejava.model.Resume;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    protected int findIndex(String uuid) {
+    protected String findIndex(String uuid) {
+        int index = -1;
+
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                return i;
+                index = i;
+                break;
             }
         }
 
-        return -1;
+        return String.valueOf(index);
     }
 
     @Override
-    protected void addResume(Resume resume, int index) {
+    protected void addResume(Resume resume, String index) {
         storage[size] = resume;
     }
 
     @Override
-    protected void removeResume(int index) {
-        storage[index] = storage[size - 1];
+    protected void removeResume(String index) {
+        int storageIndex = convertIndexType(index);
+        storage[storageIndex] = storage[size - 1];
     }
 }

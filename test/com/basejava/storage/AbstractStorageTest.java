@@ -5,6 +5,8 @@ import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.Resume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,7 +95,11 @@ public abstract class AbstractStorageTest {
 
     @Test
     void getAll() {
-        assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAll());
+        List arrayList = Arrays.asList(storage.getAll());
+
+        assertTrue(arrayList.contains(RESUME_1));
+        assertTrue(arrayList.contains(RESUME_2));
+        assertTrue(arrayList.contains(RESUME_3));
     }
 
     protected abstract void assertSize(int size);

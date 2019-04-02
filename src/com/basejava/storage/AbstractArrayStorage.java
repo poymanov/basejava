@@ -23,11 +23,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected void updateItem(int index, Resume resume) {
-        storage[index] = resume;
+    protected void updateItem(String index, Resume resume) {
+        int storageIndex = convertIndexType(index);
+        storage[storageIndex] = resume;
     }
 
-    protected void addItem(int index, Resume resume) {
+    protected void addItem(String index, Resume resume) {
         if (size == MAX_SIZE) {
             throw new StorageException("Overflow the maximum storage size (" + MAX_SIZE + ")", resume.getUuid());
         }
@@ -36,17 +37,22 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size++;
     }
 
-    protected Resume getItem(int index) {
-        return storage[index];
+    protected Resume getItem(String index) {
+        int storageIndex = convertIndexType(index);
+        return storage[storageIndex];
     }
 
-    protected void removeItem(int index) {
+    protected void removeItem(String index) {
         removeResume(index);
         storage[size - 1] = null;
         size--;
     }
 
-    protected abstract void addResume(Resume resume, int index);
+    protected boolean isExists(String index) {
+        return Integer.valueOf(index) >= 0;
+    }
 
-    protected abstract void removeResume(int index);
+    protected abstract void addResume(Resume resume, String index);
+
+    protected abstract void removeResume(String index);
 }
