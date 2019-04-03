@@ -9,6 +9,6 @@ public class MainReflection {
 
     public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method method = Resume.class.getDeclaredMethod("toString");
-        System.out.println(method.invoke(new Resume()));
+        System.out.println(method.invoke(new Resume("Test Name")));
     }
 }

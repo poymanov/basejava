@@ -3,13 +3,14 @@ package com.basejava.storage;
 import com.basejava.model.Resume;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected Integer findIndex(Object uuid) {
-        Resume searchResume = new Resume(uuid.toString());
-        return Arrays.binarySearch(storage, 0, size, searchResume);
+        Resume searchResume = new Resume(uuid.toString(), "");
+        return Arrays.binarySearch(storage, 0, size, searchResume, Comparator.comparing(Resume::getUuid));
     }
 
     @Override

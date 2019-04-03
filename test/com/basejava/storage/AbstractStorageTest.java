@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractStorageTest {
     protected final AbstractStorage storage;
 
-    private static final Resume RESUME_1 = new Resume("uuid1");
-    private static final Resume RESUME_2 = new Resume("uuid2");
-    private static final Resume RESUME_3 = new Resume("uuid3");
+    private static final Resume RESUME_1 = new Resume("uuid1", "Test Name");
+    private static final Resume RESUME_2 = new Resume("uuid2", "Test Name 2");
+    private static final Resume RESUME_3 = new Resume("uuid3", "Test Name 3");
 
     protected AbstractStorageTest(AbstractStorage storage) {
         this.storage = storage;
@@ -38,7 +38,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     void update() {
-        Resume uuid4 = new Resume("uuid1");
+        Resume uuid4 = new Resume("uuid1", "Test Name");
         storage.update(uuid4);
         assertSame(uuid4, storage.get("uuid1"));
     }
@@ -52,13 +52,13 @@ public abstract class AbstractStorageTest {
     @Test
     void saveExistedResume() {
         assertThrows(ExistedStorageException.class, () -> {
-            storage.save(new Resume("uuid1"));
+            storage.save(new Resume("uuid1", "Test Name"));
         });
     }
 
     @Test
     void save() {
-        Resume resume4 = new Resume("uuid4");
+        Resume resume4 = new Resume("uuid4", "Test Name");
         storage.save(resume4);
         assertSize(4);
         assertSame(resume4, storage.get("uuid4"));
