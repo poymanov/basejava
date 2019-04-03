@@ -2,6 +2,10 @@ package com.basejava.storage;
 
 import com.basejava.model.Resume;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Array based storage for Resumes
  */
@@ -26,5 +30,11 @@ public class ArrayStorage extends AbstractArrayStorage {
     @Override
     protected void removeResume(int index) {
         storage[index] = storage[size - 1];
+    }
+
+    public List<Resume> getAllSorted() {
+        List<Resume> resumes = Arrays.asList(Arrays.copyOf(storage, size));
+        resumes.sort(Comparator.comparing(Resume::getUuid));
+        return resumes;
     }
 }

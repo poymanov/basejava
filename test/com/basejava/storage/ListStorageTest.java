@@ -9,6 +9,6 @@ class ListStorageTest extends AbstractStorageTest {
 
     @Override
     protected void assertSize(int size) {
-        assertEquals(size, storage.getAll().length);
+        assertEquals(size, storage.getAllSorted().size());
     }
 }
