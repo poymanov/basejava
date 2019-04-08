@@ -1,26 +1,17 @@
 package com.basejava.storage;
 
-import org.junit.jupiter.api.Nested;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    ArrayStorageTest.class,
+    SortedArrayStorageTest.class,
+    ListStorageTest.class,
+    MapStorageTest.class,
+    MapHashStorageTest.class
+})
 
 public class AllStorageTest {
 
-    @Nested
-    class Array extends ArrayStorageTest {
-    }
-
-    @Nested
-    class SortedArray extends SortedArrayStorageTest {
-    }
-
-    @Nested
-    class List extends ListStorageTest {
-    }
-
-    @Nested
-    class Map extends MapStorageTest {
-    }
-
-    @Nested
-    class MapHash extends MapHashStorageTest {
-    }
 }

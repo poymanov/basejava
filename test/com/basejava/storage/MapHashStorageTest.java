@@ -1,9 +1,9 @@
 package com.basejava.storage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
-class MapHashStorageTest extends AbstractStorageTest {
-    protected MapHashStorageTest() {
+public class MapHashStorageTest extends AbstractStorageTest {
+    public MapHashStorageTest() {
         super(new MapHashStorage());
     }
 

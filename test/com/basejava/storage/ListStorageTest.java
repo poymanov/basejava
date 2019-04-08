@@ -1,9 +1,9 @@
 package com.basejava.storage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
-class ListStorageTest extends AbstractStorageTest {
-    protected ListStorageTest() {
+public class ListStorageTest extends AbstractStorageTest {
+    public ListStorageTest() {
         super(new ListStorage());
     }
 

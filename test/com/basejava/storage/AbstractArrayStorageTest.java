@@ -2,9 +2,9 @@ package com.basejava.storage;
 
 import com.basejava.exceptions.StorageException;
 import com.basejava.model.Resume;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
     protected final AbstractArrayStorage storage;
@@ -14,21 +14,19 @@ public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
         this.storage = storage;
     }
 
-    @Test
-    void saveOverflowError() {
+    @Test(expected = StorageException.class)
+    public void saveOverflowError() {
         storage.clear();
 
         for (int i = 0; i < AbstractArrayStorage.MAX_SIZE; i++) {
             storage.save(new Resume("Test Name"));
         }
 
-        assertThrows(StorageException.class, () -> {
-            storage.save(new Resume("Test Name"));
-        });
+        storage.save(new Resume("Test Name"));
     }
 
     @Test
-    void size() {
+    public void size() {
         assertSize(3);
     }
 
