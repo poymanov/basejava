@@ -8,33 +8,33 @@ public class MapHashStorage extends AbstractStorage {
     protected Map<Object, Resume> storage = new HashMap<>();
 
     @Override
-    protected Object findIndex(Object uuid) {
+    protected Object findSearchKey(Object uuid) {
         return Objects.hash(uuid);
     }
 
     @Override
-    protected void updateItem(Object index, Resume resume) {
-        storage.put(index, resume);
+    protected void updateItem(Object searchKey, Resume resume) {
+        storage.put(searchKey, resume);
     }
 
     @Override
-    protected void addItem(Object index, Resume resume) {
-        storage.put(index, resume);
+    protected void addItem(Object searchKey, Resume resume) {
+        storage.put(searchKey, resume);
     }
 
     @Override
-    protected Resume getItem(Object index) {
-        return storage.get(index);
+    protected Resume getItem(Object searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
-    protected void removeItem(Object index) {
-        storage.remove(index);
+    protected void removeItem(Object searchKey) {
+        storage.remove(searchKey);
     }
 
     @Override
-    protected boolean isExists(Object index) {
-        return storage.containsKey(index);
+    protected boolean isExist(Object searchKey) {
+        return storage.containsKey(searchKey);
     }
 
     @Override
@@ -43,9 +43,7 @@ public class MapHashStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> resumes = Arrays.asList(storage.values().toArray(new Resume[0]));
-        resumes.sort(Comparator.comparing(Resume::getUuid));
-        return resumes;
+    protected List<Resume> getAll() {
+        return Arrays.asList(storage.values().toArray(new Resume[0]));
     }
 }

@@ -3,7 +3,6 @@ package com.basejava.storage;
 import com.basejava.model.Resume;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -12,7 +11,7 @@ import java.util.List;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    protected Integer findIndex(Object uuid) {
+    protected Integer findSearchKey(Object uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid.toString())) {
                 return i;
@@ -32,9 +31,8 @@ public class ArrayStorage extends AbstractArrayStorage {
         storage[index] = storage[size - 1];
     }
 
-    public List<Resume> getAllSorted() {
-        List<Resume> resumes = Arrays.asList(Arrays.copyOf(storage, size));
-        resumes.sort(Comparator.comparing(Resume::getUuid));
-        return resumes;
+    @Override
+    protected List<Resume> getAll() {
+        return Arrays.asList(Arrays.copyOf(storage, size));
     }
 }

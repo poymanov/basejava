@@ -3,14 +3,13 @@ package com.basejava.storage;
 import com.basejava.model.Resume;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
-    protected List<Resume> storage = new ArrayList<Resume>();
+    protected List<Resume> storage = new ArrayList<>();
 
     @Override
-    protected Integer findIndex(Object uuid) {
+    protected Integer findSearchKey(Object uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).getUuid().equals(uuid.toString())) {
                 return i;
@@ -40,7 +39,7 @@ public class ListStorage extends AbstractStorage {
         storage.remove((int) index);
     }
 
-    protected boolean isExists(Object index) {
+    protected boolean isExist(Object index) {
         return (int) index >= 0;
     }
 
@@ -50,7 +49,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        return storage;
+    protected List<Resume> getAll() {
+        return new ArrayList<>(storage);
     }
 }

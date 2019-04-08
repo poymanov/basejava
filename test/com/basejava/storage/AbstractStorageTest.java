@@ -3,6 +3,7 @@ package com.basejava.storage;
 import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.Resume;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -89,5 +90,12 @@ public abstract class AbstractStorageTest {
         assertEquals(Arrays.asList(RESUME_1, RESUME_2, RESUME_3), storage.getAllSorted());
     }
 
-    protected abstract void assertSize(int size);
+    @Test
+    public void size() {
+        assertSize(3);
+    }
+
+    private void assertSize(int size) {
+        Assert.assertEquals(size, storage.getAllSorted().size());
+    }
 }

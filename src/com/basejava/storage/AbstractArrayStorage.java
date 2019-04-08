@@ -42,7 +42,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size--;
     }
 
-    protected boolean isExists(Object index) {
+    protected boolean isExist(Object index) {
         return (int) index >= 0;
     }
 

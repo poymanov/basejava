@@ -8,33 +8,33 @@ public class MapStorage extends AbstractStorage {
     protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected String findIndex(Object uuid) {
-        return uuid.toString();
+    protected String findSearchKey(Object uuid) {
+        return (String) uuid;
     }
 
     @Override
-    protected void updateItem(Object index, Resume resume) {
-        storage.put(index.toString(), resume);
+    protected void updateItem(Object searchKey, Resume resume) {
+        storage.put((String) searchKey, resume);
     }
 
     @Override
-    protected void addItem(Object index, Resume resume) {
-        storage.put(index.toString(), resume);
+    protected void addItem(Object searchKey, Resume resume) {
+        storage.put((String) searchKey, resume);
     }
 
     @Override
-    protected Resume getItem(Object index) {
-        return storage.get(index.toString());
+    protected Resume getItem(Object searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
-    protected void removeItem(Object index) {
-        storage.remove(index.toString());
+    protected void removeItem(Object searchKey) {
+        storage.remove(searchKey);
     }
 
     @Override
-    protected boolean isExists(Object index) {
-        return storage.containsKey(index.toString());
+    protected boolean isExist(Object searchKey) {
+        return storage.containsKey(searchKey);
     }
 
     @Override
@@ -43,9 +43,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> resumes = Arrays.asList(storage.values().toArray(new Resume[0]));
-        resumes.sort(Comparator.comparing(Resume::getUuid));
-        return resumes;
+    protected List<Resume> getAll() {
+        return Arrays.asList(storage.values().toArray(new Resume[0]));
     }
 }

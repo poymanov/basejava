@@ -9,7 +9,7 @@ import java.util.List;
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
-    protected Integer findIndex(Object uuid) {
+    protected Integer findSearchKey(Object uuid) {
         Resume searchResume = new Resume(uuid.toString(), "");
         return Arrays.binarySearch(storage, 0, size, searchResume, Comparator.comparing(Resume::getUuid));
     }
@@ -29,7 +29,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         }
     }
 
-    public List<Resume> getAllSorted() {
+    protected List<Resume> getAll() {
         return Arrays.asList(Arrays.copyOf(storage, size));
     }
 }
