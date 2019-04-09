@@ -7,20 +7,27 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertSame;
 
 
 public abstract class AbstractStorageTest {
-    protected final AbstractStorage storage;
+    protected final Storage storage;
 
-    private static final Resume RESUME_1 = new Resume("uuid1", "Test Name");
-    private static final Resume RESUME_2 = new Resume("uuid2", "Test Name 2");
-    private static final Resume RESUME_3 = new Resume("uuid3", "Test Name 3");
+    private static final String UUID_1 = "uuid1";
+    private static final String UUID_2 = "uuid2";
+    private static final String UUID_3 = "uuid3";
+    private static final String UUID_4 = "uuid4";
+    private static final String UUID_DUMMY = "dummy";
 
-    protected AbstractStorageTest(AbstractStorage storage) {
+    private static final Resume RESUME_1 = new Resume(UUID_1, "Test Name");
+    private static final Resume RESUME_2 = new Resume(UUID_2, "Test Name 2");
+    private static final Resume RESUME_3 = new Resume(UUID_3, "Test Name 3");
+    private static final Resume RESUME_4 = new Resume(UUID_4, "Test Name 4");
+
+    protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
@@ -34,14 +41,14 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = NotExistedStorageException.class)
     public void updateNotExisted() {
-        storage.update(new Resume("dummy"));
+        storage.update(new Resume(UUID_DUMMY));
     }
 
     @Test
     public void update() {
-        Resume uuid4 = new Resume("uuid1", "Test Name");
+        Resume uuid4 = new Resume(UUID_1, "Test Name");
         storage.update(uuid4);
-        assertSame(uuid4, storage.get("uuid1"));
+        assertSame(uuid4, storage.get(UUID_1));
     }
 
     @Test
@@ -52,42 +59,47 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ExistedStorageException.class)
     public void saveExistedResume() {
-        storage.save(new Resume("uuid1", "Test Name"));
+        storage.save(RESUME_1);
     }
 
     @Test
     public void save() {
-        Resume resume4 = new Resume("uuid4", "Test Name");
-        storage.save(resume4);
+        storage.save(RESUME_4);
         assertSize(4);
-        assertSame(resume4, storage.get("uuid4"));
+        assertSame(RESUME_4, storage.get(UUID_4));
     }
 
     @Test(expected = NotExistedStorageException.class)
     public void getNotExisted() {
-        storage.get("dummy");
+        storage.get(UUID_DUMMY);
     }
 
     @Test
     public void get() {
-        assertEquals(RESUME_1, storage.get("uuid1"));
+        assertEquals(RESUME_1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistedStorageException.class)
     public void deleteNotExisted() {
-        storage.delete("dummy");
+        storage.delete(UUID_DUMMY);
     }
 
     @Test(expected = NotExistedStorageException.class)
     public void delete() {
-        storage.delete(RESUME_1.getUuid());
+        storage.delete(UUID_1);
         assertSize(2);
-        storage.get(RESUME_1.getUuid());
+        storage.get(UUID_1);
     }
 
     @Test
     public void getAllSorted() {
-        assertEquals(Arrays.asList(RESUME_1, RESUME_2, RESUME_3), storage.getAllSorted());
+        ArrayList<Resume> resumes = new ArrayList<>();
+        resumes.add(RESUME_1);
+        resumes.add(RESUME_2);
+        resumes.add(RESUME_3);
+        resumes.sort(Resume::compareTo);
+
+        assertEquals(resumes, storage.getAllSorted());
     }
 
     @Test
