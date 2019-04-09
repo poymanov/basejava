@@ -38,8 +38,7 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public int compareTo(Resume o) {
-        return hashCode() == o.hashCode() ? 0 : uuid.compareTo(o.uuid) == 0 ?
-                fullName.compareTo(o.fullName) : uuid.compareTo(o.uuid);
+        return uuid.compareTo(o.uuid) == 0 ? fullName.compareTo(o.fullName) : uuid.compareTo(o.uuid);
     }
 
     @Override
