@@ -39,6 +39,7 @@ public class ListStorage extends AbstractStorage {
         storage.remove((int) index);
     }
 
+    @Override
     protected boolean isExist(Object index) {
         return (int) index >= 0;
     }

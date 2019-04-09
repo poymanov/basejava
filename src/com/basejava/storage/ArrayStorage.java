@@ -2,9 +2,6 @@ package com.basejava.storage;
 
 import com.basejava.model.Resume;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Array based storage for Resumes
  */
@@ -29,10 +26,5 @@ public class ArrayStorage extends AbstractArrayStorage {
     @Override
     protected void removeResume(int index) {
         storage[index] = storage[size - 1];
-    }
-
-    @Override
-    protected List<Resume> getAll() {
-        return Arrays.asList(Arrays.copyOf(storage, size));
     }
 }

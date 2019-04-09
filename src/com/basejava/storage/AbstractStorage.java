@@ -4,33 +4,37 @@ import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.Resume;
 
-import java.util.Comparator;
 import java.util.List;
 
 public abstract class AbstractStorage implements Storage {
+    @Override
     public void update(Resume resume) {
-        Object resumeSearchKey = getExistedSearchKey(resume.getUuid());
-        updateItem(resumeSearchKey, resume);
+        Object searchKey = getExistedSearchKey(resume.getUuid());
+        updateItem(searchKey, resume);
     }
 
+    @Override
     public void save(Resume resume) {
-        Object resumeSearchKey = getNotExistedSearchKey(resume.getUuid());
-        addItem(resumeSearchKey, resume);
+        Object searchKey = getNotExistedSearchKey(resume.getUuid());
+        addItem(searchKey, resume);
     }
 
+    @Override
     public Resume get(String uuid) {
-        Object resumeSearchKey = getExistedSearchKey(uuid);
-        return getItem(resumeSearchKey);
+        Object searchKey = getExistedSearchKey(uuid);
+        return getItem(searchKey);
     }
 
+    @Override
     public void delete(String uuid) {
-        Object resumeSearchKey = getExistedSearchKey(uuid);
-        removeItem(resumeSearchKey);
+        Object searchKey = getExistedSearchKey(uuid);
+        removeItem(searchKey);
     }
 
+    @Override
     public List<Resume> getAllSorted() {
         List<Resume> resumes = getAll();
-        resumes.sort(Comparator.comparing(Resume::getUuid));
+        resumes.sort(Resume::compareTo);
         return resumes;
     }
 

@@ -4,10 +4,8 @@ import com.basejava.model.Resume;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-
     @Override
     protected Integer findSearchKey(Object uuid) {
         Resume searchResume = new Resume(uuid.toString(), "");
@@ -27,9 +25,5 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         if (numbersMoved > 0) {
             System.arraycopy(storage, index + 1, storage, index, numbersMoved);
         }
-    }
-
-    protected List<Resume> getAll() {
-        return Arrays.asList(Arrays.copyOf(storage, size));
     }
 }

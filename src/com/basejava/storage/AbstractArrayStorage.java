@@ -4,12 +4,14 @@ import com.basejava.exceptions.StorageException;
 import com.basejava.model.Resume;
 
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int MAX_SIZE = 10000;
     protected Resume[] storage = new Resume[MAX_SIZE];
     protected int size;
 
+    @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
@@ -19,10 +21,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
+    @Override
     protected void updateItem(Object index, Resume resume) {
         storage[(int) index] = resume;
     }
 
+    @Override
     protected void addItem(Object index, Resume resume) {
         if (size == MAX_SIZE) {
             throw new StorageException("Overflow the maximum storage size (" + MAX_SIZE + ")", resume.getUuid());
@@ -32,16 +36,24 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size++;
     }
 
+    @Override
     protected Resume getItem(Object index) {
         return storage[(int) index];
     }
 
+    @Override
     protected void removeItem(Object index) {
         removeResume((int) index);
         storage[size - 1] = null;
         size--;
     }
 
+    @Override
+    protected List<Resume> getAll() {
+        return Arrays.asList(Arrays.copyOf(storage, size));
+    }
+
+    @Override
     protected boolean isExist(Object index) {
         return (int) index >= 0;
     }
