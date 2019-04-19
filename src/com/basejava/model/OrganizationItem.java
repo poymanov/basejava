@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
 
 public class OrganizationItem {
     private String title;
@@ -50,6 +51,23 @@ public class OrganizationItem {
 
     public void setPeriodTo(LocalDate periodTo) {
         this.periodTo = periodTo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrganizationItem that = (OrganizationItem) o;
+        return title.equals(that.title) &&
+                subtitle.equals(that.subtitle) &&
+                description.equals(that.description) &&
+                periodFrom.equals(that.periodFrom) &&
+                periodTo.equals(that.periodTo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, subtitle, description, periodFrom, periodTo);
     }
 
     @Override

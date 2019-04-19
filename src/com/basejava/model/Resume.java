@@ -49,12 +49,15 @@ public class Resume implements Comparable<Resume> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
-        return uuid.equals(resume.uuid) && fullName.equals(resume.fullName);
+        return uuid.equals(resume.uuid) &&
+                fullName.equals(resume.fullName) &&
+                contacts.equals(resume.contacts) &&
+                sections.equals(resume.sections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, fullName);
+        return Objects.hash(uuid, fullName, contacts, sections);
     }
 
     @Override
