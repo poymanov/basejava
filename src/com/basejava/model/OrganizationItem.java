@@ -1,14 +1,16 @@
 package com.basejava.model;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class OrganizationItem {
     private String title;
     private String subtitle;
     private String description;
-    private Date periodFrom;
-    private Date periodTo;
+    private LocalDate periodFrom;
+    private LocalDate periodTo;
 
     public String getTitle() {
         return title;
@@ -34,19 +36,19 @@ public class OrganizationItem {
         this.description = description;
     }
 
-    public Date getPeriodFrom() {
+    public LocalDate getPeriodFrom() {
         return periodFrom;
     }
 
-    public void setPeriodFrom(Date periodFrom) {
+    public void setPeriodFrom(LocalDate periodFrom) {
         this.periodFrom = periodFrom;
     }
 
-    public Date getPeriodTo() {
+    public LocalDate getPeriodTo() {
         return periodTo;
     }
 
-    public void setPeriodTo(Date periodTo) {
+    public void setPeriodTo(LocalDate periodTo) {
         this.periodTo = periodTo;
     }
 
@@ -54,15 +56,15 @@ public class OrganizationItem {
     public String toString() {
         String content = "";
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/yyyy");
 
         content += title + "\n";
-        content += dateFormat.format(periodFrom) + " - ";
+        content += periodFrom.format(dateFormat) + " - ";
 
         if (periodTo == null) {
             content += "Сейчас";
         } else {
-            content += dateFormat.format(periodTo);
+            content += periodTo.format(dateFormat);
         }
 
         content += "\n" + subtitle + "\n";

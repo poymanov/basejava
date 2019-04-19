@@ -1,5 +1,5 @@
 package com.basejava.model;
 
-abstract public class Section {
+public abstract class Section {
 
 }
