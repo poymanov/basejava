@@ -7,9 +7,9 @@ import java.util.*;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        HashMap<ContactType, Contact> contacts = getContacts();
+        Map<ContactType, Contact> contacts = getContacts();
 
-        HashMap<SectionType, Section> sections = new HashMap<SectionType, Section>() {{
+        EnumMap sections = new EnumMap(SectionType.class) {{
             put(SectionType.OBJECTIVE, getObjective());
             put(SectionType.PERSONAL, getPersonal());
             put(SectionType.ACHIEVEMENT, getAchievement());
@@ -49,8 +49,8 @@ public class ResumeTestData {
         }
     }
 
-    private static HashMap<ContactType, Contact> getContacts() {
-        return new HashMap<ContactType, Contact>() {{
+    private static EnumMap getContacts() {
+        return new EnumMap(ContactType.class) {{
             put(ContactType.PHONE, new Contact("+7(921) 855-0482", "+7(921) 855-0482"));
             put(ContactType.SKYPE, new Contact("grigory.kislin", "grigory.kislin"));
             put(ContactType.EMAIL, new Contact("gkislin@yandex.ru", "gkislin@yandex.ru"));
