@@ -6,7 +6,7 @@ import com.basejava.model.Resume;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected static final int MAX_SIZE = 10000;
     protected Resume[] storage = new Resume[MAX_SIZE];
     protected int size;
@@ -22,12 +22,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateItem(Object index, Resume resume) {
+    protected void updateItem(Integer index, Resume resume) {
         storage[(int) index] = resume;
     }
 
     @Override
-    protected void addItem(Object index, Resume resume) {
+    protected void addItem(Integer index, Resume resume) {
         if (size == MAX_SIZE) {
             throw new StorageException("Overflow the maximum storage size (" + MAX_SIZE + ")", resume.getUuid());
         }
@@ -37,12 +37,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getItem(Object index) {
+    protected Resume getItem(Integer index) {
         return storage[(int) index];
     }
 
     @Override
-    protected void removeItem(Object index) {
+    protected void removeItem(Integer index) {
         removeResume((int) index);
         storage[size - 1] = null;
         size--;
@@ -54,7 +54,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object index) {
+    protected boolean isExist(Integer index) {
         return (int) index >= 0;
     }
 

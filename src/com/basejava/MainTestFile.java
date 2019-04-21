@@ -1,7 +1,6 @@
 package com.basejava;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class MainTestFile {
     public static void main(String[] args) {
