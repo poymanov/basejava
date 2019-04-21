@@ -1,14 +1,10 @@
 package com.basejava.model;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Objects;
 
 public class OrganizationItem {
     private String title;
-    private String subtitle;
     private String description;
     private LocalDate periodFrom;
     private LocalDate periodTo;
@@ -19,14 +15,6 @@ public class OrganizationItem {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getSubtitle() {
-        return subtitle;
-    }
-
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
     }
 
     public String getDescription() {
@@ -57,17 +45,22 @@ public class OrganizationItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         OrganizationItem that = (OrganizationItem) o;
-        return title.equals(that.title) &&
-                subtitle.equals(that.subtitle) &&
-                description.equals(that.description) &&
-                periodFrom.equals(that.periodFrom) &&
-                periodTo.equals(that.periodTo);
+
+        if (!title.equals(that.title)) return false;
+        if (!description.equals(that.description)) return false;
+        if (!periodFrom.equals(that.periodFrom)) return false;
+        return periodTo.equals(that.periodTo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, subtitle, description, periodFrom, periodTo);
+        int result = title.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + periodFrom.hashCode();
+        result = 31 * result + periodTo.hashCode();
+        return result;
     }
 
     @Override
@@ -76,7 +69,6 @@ public class OrganizationItem {
 
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/yyyy");
 
-        content += title + "\n";
         content += periodFrom.format(dateFormat) + " - ";
 
         if (periodTo == null) {
@@ -85,11 +77,13 @@ public class OrganizationItem {
             content += periodTo.format(dateFormat);
         }
 
-        content += "\n" + subtitle + "\n";
+        content += "\n" + title;
 
         if (description != null) {
-            content += description;
+            content += "\n" + description;
         }
+
+        content += "\n";
 
         return content;
     }

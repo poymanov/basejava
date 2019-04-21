@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
-    private ArrayList<OrganizationItem> items;
+    private ArrayList<OrganizationList> items;
 
-    public ArrayList<OrganizationItem> getItems() {
+    public ArrayList<OrganizationList> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<OrganizationItem> items) {
+    public void setItems(ArrayList<OrganizationList> items) {
         this.items = items;
     }
 
@@ -18,7 +18,7 @@ public class OrganizationSection extends AbstractSection {
     public String toString() {
         StringBuilder content = new StringBuilder();
 
-        for (OrganizationItem item : items) {
+        for (OrganizationList item : items) {
             content.append(item).append("\n\n");
         }
 
