@@ -43,7 +43,7 @@ public class ResumeTestData {
         System.out.println("");
 
         // Вывод секций
-        for (HashMap.Entry<SectionType, Section> item : resume.getSections().entrySet()) {
+        for (HashMap.Entry<SectionType, AbstractSection> item : resume.getSections().entrySet()) {
             System.out.println(item.getKey().getTitle());
             System.out.println(item.getValue() + "\n");
         }

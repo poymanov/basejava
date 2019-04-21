@@ -2,7 +2,7 @@ package com.basejava.model;
 
 import java.util.Objects;
 
-public class TextSection extends Section {
+public class TextSection extends AbstractSection {
     private String title;
 
     public String getTitle() {
