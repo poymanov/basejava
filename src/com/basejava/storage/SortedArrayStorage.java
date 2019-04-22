@@ -8,7 +8,7 @@ import java.util.Comparator;
 public class SortedArrayStorage extends AbstractArrayStorage {
     @Override
     protected Integer findSearchKey(String uuid) {
-        Resume searchResume = new Resume(uuid.toString(), "");
+        Resume searchResume = new Resume(uuid, "");
         return Arrays.binarySearch(storage, 0, size, searchResume, Comparator.comparing(Resume::getUuid));
     }
 

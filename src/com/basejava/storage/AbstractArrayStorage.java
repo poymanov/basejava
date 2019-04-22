@@ -29,6 +29,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     @Override
     protected void addItem(Integer index, Resume resume) {
         if (size == MAX_SIZE) {
+            LOG.info(String.format("Overflow maximum storage - Resume(%s)", resume.getUuid()));
             throw new StorageException("Overflow the maximum storage size (" + MAX_SIZE + ")", resume.getUuid());
         }
 

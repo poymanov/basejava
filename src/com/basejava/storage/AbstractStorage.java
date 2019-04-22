@@ -5,8 +5,11 @@ import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.Resume;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class AbstractStorage<SK> implements Storage {
+    protected static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
+
     @Override
     public void update(Resume resume) {
         SK searchKey = getExistedSearchKey(resume.getUuid());
@@ -56,6 +59,7 @@ public abstract class AbstractStorage<SK> implements Storage {
         SK searchKey = findSearchKey(uuid);
 
         if (!isExist(searchKey)) {
+            LOG.info(String.format("Resume (%s) not exists", uuid));
             throw new NotExistedStorageException(uuid);
         }
 
@@ -66,6 +70,7 @@ public abstract class AbstractStorage<SK> implements Storage {
         SK searchKey = findSearchKey(uuid);
 
         if (isExist(searchKey)) {
+            LOG.info(String.format("Resume (%s) already exists", uuid));
             throw new ExistedStorageException(uuid);
         }
 
