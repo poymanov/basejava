@@ -5,6 +5,10 @@ import java.util.Objects;
 public class TextSection extends AbstractSection {
     private String title;
 
+    public TextSection(String title) {
+        this.title = title;
+    }
+
     public String getTitle() {
         return title;
     }

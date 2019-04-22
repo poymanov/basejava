@@ -6,6 +6,10 @@ import java.util.Objects;
 public class ListSection extends AbstractSection {
     private ArrayList<String> items;
 
+    public ListSection(ArrayList<String> items) {
+        this.items = items;
+    }
+
     public ArrayList<String> getItems() {
         return items;
     }

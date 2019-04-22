@@ -6,6 +6,10 @@ import java.util.Objects;
 public class OrganizationSection extends AbstractSection {
     private ArrayList<OrganizationList> items;
 
+    public OrganizationSection(ArrayList<OrganizationList> items) {
+        this.items = items;
+    }
+
     public ArrayList<OrganizationList> getItems() {
         return items;
     }

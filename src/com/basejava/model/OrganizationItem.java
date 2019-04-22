@@ -9,6 +9,13 @@ public class OrganizationItem {
     private LocalDate periodFrom;
     private LocalDate periodTo;
 
+    public OrganizationItem(String title, String description, LocalDate periodFrom, LocalDate periodTo) {
+        this.title = title;
+        this.description = description;
+        this.periodFrom = periodFrom;
+        this.periodTo = periodTo;
+    }
+
     public String getTitle() {
         return title;
     }
