@@ -9,17 +9,17 @@ public class MapStorage extends AbstractStorage<String> {
 
     @Override
     protected String findSearchKey(String uuid) {
-        return (String) uuid;
+        return uuid;
     }
 
     @Override
     protected void updateItem(String searchKey, Resume resume) {
-        storage.put((String) searchKey, resume);
+        storage.put(searchKey, resume);
     }
 
     @Override
     protected void addItem(String searchKey, Resume resume) {
-        storage.put((String) searchKey, resume);
+        storage.put(searchKey, resume);
     }
 
     @Override
