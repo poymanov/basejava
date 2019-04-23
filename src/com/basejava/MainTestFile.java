@@ -16,9 +16,9 @@ public class MainTestFile {
             for (File file : files) {
                 if (file.isDirectory()) {
                     printData(file);
+                } else {
+                    System.out.println(file.getName());
                 }
-
-                System.out.println(file.getName());
             }
         } else {
             System.out.println(root.getName());
