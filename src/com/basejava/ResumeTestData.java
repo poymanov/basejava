@@ -44,9 +44,9 @@ public class ResumeTestData {
     private static Map<ContactType, Contact> getContacts() {
         Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
 
-        contacts.put(ContactType.PHONE, new Contact("+7(921) 855-0482", "+7(921) 855-0482"));
-        contacts.put(ContactType.SKYPE, new Contact("grigory.kislin", "grigory.kislin"));
-        contacts.put(ContactType.EMAIL, new Contact("gkislin@yandex.ru", "gkislin@yandex.ru"));
+        contacts.put(ContactType.PHONE, new Contact("+7(921) 855-0482", null));
+        contacts.put(ContactType.SKYPE, new Contact("grigory.kislin", null));
+        contacts.put(ContactType.EMAIL, new Contact("gkislin@yandex.ru", null));
         contacts.put(ContactType.LINKEDIN, new Contact("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin"));
         contacts.put(ContactType.GITHUB, new Contact("Профиль GitHub", "https://github.com/gkislin"));
         contacts.put(ContactType.STACKOVERFLOW, new Contact("Профиль Stackoverflow", "https://stackoverflow.com/users/54198473"));
@@ -114,7 +114,7 @@ public class ResumeTestData {
                 LocalDate.of(2013, 10, 1), null);
 
 
-        OrganizationList organization1 = new OrganizationList("Java Online Projects", new ArrayList<>() {{
+        OrganizationList organization1 = new OrganizationList("Java Online Projects", new ArrayList<OrganizationItem>() {{
             add(item1);
         }});
 
@@ -123,7 +123,7 @@ public class ResumeTestData {
                 "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.",
                 LocalDate.of(2014, 10, 1), LocalDate.of(2016, 1, 1));
 
-        OrganizationList organization2 = new OrganizationList("Wrike", new ArrayList<>() {{
+        OrganizationList organization2 = new OrganizationList("Wrike", new ArrayList<OrganizationItem>() {{
             add(item2);
         }});
 
@@ -131,7 +131,7 @@ public class ResumeTestData {
                 "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python",
                 LocalDate.of(2012, 4, 1), LocalDate.of(2014, 10, 1));
 
-        OrganizationList organization3 = new OrganizationList("RIT Center", new ArrayList<>() {{
+        OrganizationList organization3 = new OrganizationList("RIT Center", new ArrayList<OrganizationItem>() {{
             add(item3);
         }});
 
@@ -140,7 +140,7 @@ public class ResumeTestData {
                 "Участие в проекте Deutsche Bank CRM (WebLogic, Hibernate, Spring, Spring MVC, SmartGWT, GWT, Jasper, Oracle). Реализация клиентской и серверной части CRM. Реализация RIA-приложения для администрирования, мониторинга и анализа результатов в области алгоритмического трейдинга. JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Highstock, Commet, HTML5.",
                 LocalDate.of(2010, 12, 1), LocalDate.of(2012, 4, 1));
 
-        OrganizationList organization4 = new OrganizationList("Luxoft (Deutsche Bank)", new ArrayList<>() {{
+        OrganizationList organization4 = new OrganizationList("Luxoft (Deutsche Bank)", new ArrayList<OrganizationItem>() {{
             add(item4);
         }});
 
@@ -149,7 +149,7 @@ public class ResumeTestData {
                 "Дизайн и имплементация Java EE фреймворка для отдела \"Платежные Системы\" (GlassFish v2.1, v3, OC4J, EJB3, JAX-WS RI 2.1, Servlet 2.4, JSP, JMX, JMS, Maven2). Реализация администрирования, статистики и мониторинга фреймворка. Разработка online JMX клиента (Python/ Jython, Django, ExtJS)",
                 LocalDate.of(2008, 6, 1), LocalDate.of(2010, 12, 1));
 
-        OrganizationList organization5 = new OrganizationList("Yota", new ArrayList<>() {{
+        OrganizationList organization5 = new OrganizationList("Yota", new ArrayList<OrganizationItem>() {{
             add(item5);
         }});
 
@@ -157,7 +157,7 @@ public class ResumeTestData {
                 "Реализация клиентской (Eclipse RCP) и серверной (JBoss 4.2, Hibernate 3.0, Tomcat, JMS) частей кластерного J2EE приложения (OLAP, Data mining).",
                 LocalDate.of(2007, 3, 1), LocalDate.of(2008, 6, 1));
 
-        OrganizationList organization6 = new OrganizationList("Enkata", new ArrayList<>() {{
+        OrganizationList organization6 = new OrganizationList("Enkata", new ArrayList<OrganizationItem>() {{
             add(item6);
         }});
 
@@ -165,7 +165,7 @@ public class ResumeTestData {
                 "Разработка информационной модели, проектирование интерфейсов, реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix).",
                 LocalDate.of(2005, 1, 1), LocalDate.of(2007, 2, 1));
 
-        OrganizationList organization7 = new OrganizationList("Siemens AG", new ArrayList<>() {{
+        OrganizationList organization7 = new OrganizationList("Siemens AG", new ArrayList<OrganizationItem>() {{
             add(item7);
         }});
 
@@ -173,7 +173,7 @@ public class ResumeTestData {
                 "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM).",
                 LocalDate.of(1997, 9, 1), LocalDate.of(2005, 1, 1));
 
-        OrganizationList organization8 = new OrganizationList("Alcatel", new ArrayList<>() {{
+        OrganizationList organization8 = new OrganizationList("Alcatel", new ArrayList<OrganizationItem>() {{
             add(item8);
         }});
 
@@ -195,14 +195,14 @@ public class ResumeTestData {
         OrganizationItem item1 = new OrganizationItem("\"Functional Programming Principles in Scala\" by Martin Odersky",
                 null, LocalDate.of(2013, 3, 1), LocalDate.of(2013, 5, 1));
 
-        OrganizationList organization1 = new OrganizationList("Coursera", new ArrayList<>() {{
+        OrganizationList organization1 = new OrganizationList("Coursera", new ArrayList<OrganizationItem>() {{
             add(item1);
         }});
 
         OrganizationItem item2 = new OrganizationItem("Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"",
                 null, LocalDate.of(2011, 3, 1), LocalDate.of(2011, 4, 1));
 
-        OrganizationList organization2 = new OrganizationList("Luxoft", new ArrayList<>() {{
+        OrganizationList organization2 = new OrganizationList("Luxoft", new ArrayList<OrganizationItem>() {{
             add(item2);
         }});
 
@@ -216,7 +216,7 @@ public class ResumeTestData {
         OrganizationItem item4 = new OrganizationItem("6 месяцев обучения цифровым телефонным сетям (Москва)", null,
                 LocalDate.of(1997, 9, 1), LocalDate.of(1998, 3, 1));
 
-        OrganizationList organization4 = new OrganizationList("Alcatel", new ArrayList<>() {{
+        OrganizationList organization4 = new OrganizationList("Alcatel", new ArrayList<OrganizationItem>() {{
             add(item4);
         }});
 
@@ -228,7 +228,7 @@ public class ResumeTestData {
                 LocalDate.of(1997, 9, 1), LocalDate.of(1993, 7, 1));
 
         OrganizationList organization5 = new OrganizationList("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики",
-                new ArrayList<>() {{
+                new ArrayList<OrganizationItem>() {{
                     add(item5);
                     add(item6);
                 }});
@@ -236,7 +236,7 @@ public class ResumeTestData {
         OrganizationItem item7 = new OrganizationItem("Закончил с отличием", null,
                 LocalDate.of(1984, 9, 1), LocalDate.of(1997, 6, 1));
 
-        OrganizationList organization6 = new OrganizationList("Заочная физико-техническая школа при МФТИ", new ArrayList<>() {{
+        OrganizationList organization6 = new OrganizationList("Заочная физико-техническая школа при МФТИ", new ArrayList<OrganizationItem>() {{
             add(item7);
         }});
 
