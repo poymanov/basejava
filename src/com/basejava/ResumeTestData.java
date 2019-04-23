@@ -17,7 +17,7 @@ public class ResumeTestData {
         System.out.println(resume.getFullName() + "\n");
 
         // Вывод контактов
-        for (HashMap.Entry<ContactType, Contact> item : resume.getContacts().entrySet()) {
+        for (Map.Entry<ContactType, Contact> item : resume.getContacts().entrySet()) {
             String contact = item.getKey().getTitle() + ": ";
 
             if (item.getKey() == ContactType.GITHUB ||
@@ -35,7 +35,7 @@ public class ResumeTestData {
         System.out.println("");
 
         // Вывод секций
-        for (HashMap.Entry<SectionType, AbstractSection> item : resume.getSections().entrySet()) {
+        for (Map.Entry<SectionType, AbstractSection> item : resume.getSections().entrySet()) {
             System.out.println(item.getKey().getTitle());
             System.out.println(item.getValue() + "\n");
         }
