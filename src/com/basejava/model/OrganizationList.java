@@ -5,12 +5,12 @@ import java.util.List;
 public class OrganizationList {
     private String title;
 
+    private List<OrganizationItem> items;
+
     public OrganizationList(String title, List<OrganizationItem> items) {
         this.title = title;
         this.items = items;
     }
-
-    private List<OrganizationItem> items;
 
     public String getTitle() {
         return title;

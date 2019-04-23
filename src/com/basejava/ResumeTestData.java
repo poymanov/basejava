@@ -7,16 +7,8 @@ import java.util.*;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        EnumMap contacts = getContacts();
-
-        EnumMap sections = new EnumMap(SectionType.class) {{
-            put(SectionType.OBJECTIVE, getObjective());
-            put(SectionType.PERSONAL, getPersonal());
-            put(SectionType.ACHIEVEMENT, getAchievement());
-            put(SectionType.QUALIFICATIONS, getQualifications());
-            put(SectionType.EXPERIENCE, getExperience());
-            put(SectionType.EDUCATION, getEducation());
-        }};
+        Map<ContactType, Contact> contacts = getContacts();
+        Map<SectionType, AbstractSection> sections = getSections();
 
         Resume resume = new Resume("Григорий Кислин");
         resume.setContacts(contacts);
@@ -49,16 +41,32 @@ public class ResumeTestData {
         }
     }
 
-    private static EnumMap getContacts() {
-        return new EnumMap(ContactType.class) {{
-            put(ContactType.PHONE, new Contact("+7(921) 855-0482", "+7(921) 855-0482"));
-            put(ContactType.SKYPE, new Contact("grigory.kislin", "grigory.kislin"));
-            put(ContactType.EMAIL, new Contact("gkislin@yandex.ru", "gkislin@yandex.ru"));
-            put(ContactType.LINKEDIN, new Contact("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin"));
-            put(ContactType.GITHUB, new Contact("Профиль GitHub", "https://github.com/gkislin"));
-            put(ContactType.STACKOVERFLOW, new Contact("Профиль Stackoverflow", "https://stackoverflow.com/users/54198473"));
-            put(ContactType.URL, new Contact("Домашняя страница", "http://gkislin.ru/"));
-        }};
+    private static Map<ContactType, Contact> getContacts() {
+        Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
+
+        contacts.put(ContactType.PHONE, new Contact("+7(921) 855-0482", "+7(921) 855-0482"));
+        contacts.put(ContactType.SKYPE, new Contact("grigory.kislin", "grigory.kislin"));
+        contacts.put(ContactType.EMAIL, new Contact("gkislin@yandex.ru", "gkislin@yandex.ru"));
+        contacts.put(ContactType.LINKEDIN, new Contact("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin"));
+        contacts.put(ContactType.GITHUB, new Contact("Профиль GitHub", "https://github.com/gkislin"));
+        contacts.put(ContactType.STACKOVERFLOW, new Contact("Профиль Stackoverflow", "https://stackoverflow.com/users/54198473"));
+        contacts.put(ContactType.URL, new Contact("Домашняя страница", "http://gkislin.ru/"));
+
+        return contacts;
+    }
+
+    private static Map<SectionType, AbstractSection> getSections() {
+        Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
+
+        sections.put(SectionType.OBJECTIVE, getObjective());
+        sections.put(SectionType.PERSONAL, getPersonal());
+        sections.put(SectionType.ACHIEVEMENT, getAchievement());
+        sections.put(SectionType.QUALIFICATIONS, getQualifications());
+        sections.put(SectionType.EXPERIENCE, getExperience());
+        sections.put(SectionType.EDUCATION, getEducation());
+
+        return sections;
+
     }
 
     private static TextSection getObjective() {
@@ -224,7 +232,6 @@ public class ResumeTestData {
                     add(item5);
                     add(item6);
                 }});
-
 
         OrganizationItem item7 = new OrganizationItem("Закончил с отличием", null,
                 LocalDate.of(1984, 9, 1), LocalDate.of(1997, 6, 1));
