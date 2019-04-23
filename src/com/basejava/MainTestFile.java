@@ -1,8 +1,6 @@
 package com.basejava;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class MainTestFile {
 
@@ -11,25 +9,19 @@ public class MainTestFile {
         printData(file);
     }
 
-    private static void printData(File file) {
-        File[] list = file.listFiles();
+    private static void printData(File root) {
+        File[] files = root.listFiles();
 
-        if (list != null) {
-            for (File item : list) {
-                System.out.println(getFilename(item));
-
-                if (item.isDirectory()) {
-                    printData(item);
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    printData(file);
                 }
+
+                System.out.println(file.getName());
             }
         } else {
-            System.out.println(getFilename(file));
+            System.out.println(root.getName());
         }
-    }
-
-    private static String getFilename(File file)
-    {
-        Path filepath = Paths.get(file.getAbsolutePath());
-        return filepath.getFileName().toString();
     }
 }
