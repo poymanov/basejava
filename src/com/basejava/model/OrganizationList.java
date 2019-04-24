@@ -1,8 +1,11 @@
 package com.basejava.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class OrganizationList {
+public class OrganizationList implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String title;
 
     private List<OrganizationItem> items;

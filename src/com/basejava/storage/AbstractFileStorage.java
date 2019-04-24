@@ -3,8 +3,7 @@ package com.basejava.storage;
 import com.basejava.exceptions.StorageException;
 import com.basejava.model.Resume;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,8 +47,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume getItem(File file) {
-        getFileContent(file);
-        return new Resume("test");
+        try {
+            return read(new BufferedInputStream(new FileInputStream(file)));
+        } catch (IOException e) {
+            throw new StorageException("File read error", file.getName(), e);
+        }
     }
 
     @Override
@@ -65,29 +67,46 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> getAll() {
         ArrayList<Resume> resumes = new ArrayList<>();
-        String[] files = directory.list();
+        File[] files = directory.listFiles();
 
         if (files != null) {
-            for (String item : files) {
-                getFileContent(new File(item));
+            for (File file : files) {
+                resumes.add(getItem(file));
             }
         }
 
         return resumes;
     }
 
-    protected abstract void saveFile(File file, Resume resume);
+    protected void saveFile(File file, Resume resume) {
+        try {
+            write(resume, new BufferedOutputStream(new FileOutputStream(file)));
+        } catch (IOException e) {
+            throw new StorageException("File write error", resume.getUuid(), e);
+        }
+    }
 
-    protected abstract void getFileContent(File file);
+    protected abstract void write(Resume resume, OutputStream os) throws IOException;
+
+    protected abstract Resume read(InputStream is) throws IOException;
 
     @Override
     public void clear() {
-        String[] files = directory.list();
+        File[] files = directory.listFiles();
         if (files != null) {
-            for (String item : files) {
-                File file = new File(item);
+            for (File file : files) {
                 file.delete();
             }
         }
+    }
+
+    public int size() {
+        String[] files = directory.list();
+
+        if (files == null) {
+            throw new StorageException("Directory read error", null);
+        }
+
+        return files.length;
     }
 }
