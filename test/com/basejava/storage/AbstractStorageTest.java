@@ -15,7 +15,7 @@ import static junit.framework.TestCase.assertSame;
 
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("./storage");
+    protected static final String STORAGE_DIR = "./storage";
     protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
