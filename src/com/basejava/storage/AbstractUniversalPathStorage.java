@@ -12,10 +12,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public abstract class AbstractUniversalPathStorage extends AbstractStorage<Path> {
     private Path directory;
+    private IOStrategy ioStrategy;
 
-    protected AbstractPathStorage(String dir) {
+    protected AbstractUniversalPathStorage(String dir) {
         directory = Paths.get(dir);
 
         Objects.requireNonNull(directory, "directory must not be null");
@@ -23,6 +24,10 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not readable/writable");
         }
+    }
+
+    public void setIoStrategy(IOStrategy ioStrategy) {
+        this.ioStrategy = ioStrategy;
     }
 
     @Override
@@ -48,8 +53,8 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume getItem(Path path) {
         try {
-            return read(new BufferedInputStream(new FileInputStream(path.toFile())));
-        } catch (IOException e) {
+            return ioStrategy.input(path.toFile());
+        } catch (Exception e) {
             throw new StorageException("File read error", path.getFileName().toString(), e);
         }
     }
@@ -83,15 +88,11 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
 
     protected void saveFile(Path path, Resume resume) {
         try {
-            write(resume, new BufferedOutputStream(new FileOutputStream(path.toFile())));
+            ioStrategy.output(resume, path.toFile());
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }
     }
-
-    protected abstract void write(Resume resume, OutputStream os) throws IOException;
-
-    protected abstract Resume read(InputStream is) throws IOException;
 
     @Override
     public void clear() {
