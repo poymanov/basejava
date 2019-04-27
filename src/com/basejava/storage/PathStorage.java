@@ -12,11 +12,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractUniversalPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
     private IOStrategy ioStrategy;
 
-    protected AbstractUniversalPathStorage(String dir) {
+    protected PathStorage(String dir) {
         directory = Paths.get(dir);
 
         Objects.requireNonNull(directory, "directory must not be null");
@@ -26,8 +26,10 @@ public abstract class AbstractUniversalPathStorage extends AbstractStorage<Path>
         }
     }
 
-    public void setIoStrategy(IOStrategy ioStrategy) {
+    public Storage setIoStrategy(IOStrategy ioStrategy) {
         this.ioStrategy = ioStrategy;
+
+        return this;
     }
 
     @Override
@@ -53,8 +55,8 @@ public abstract class AbstractUniversalPathStorage extends AbstractStorage<Path>
     @Override
     protected Resume getItem(Path path) {
         try {
-            return ioStrategy.input(path.toFile());
-        } catch (Exception e) {
+            return ioStrategy.input(new BufferedInputStream(new FileInputStream(path.toFile())));
+        } catch (IOException e) {
             throw new StorageException("File read error", path.getFileName().toString(), e);
         }
     }
@@ -88,7 +90,7 @@ public abstract class AbstractUniversalPathStorage extends AbstractStorage<Path>
 
     protected void saveFile(Path path, Resume resume) {
         try {
-            ioStrategy.output(resume, path.toFile());
+            ioStrategy.output(resume, new BufferedOutputStream(new FileOutputStream(path.toFile())));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }

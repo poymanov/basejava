@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractUniversalFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private File directory;
     private IOStrategy ioStrategy;
 
-    protected AbstractUniversalFileStorage(File directory) {
+    public FileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
 
         if (!directory.isDirectory()) {
@@ -26,8 +26,10 @@ public abstract class AbstractUniversalFileStorage extends AbstractStorage<File>
         this.directory = directory;
     }
 
-    public void setIoStrategy(IOStrategy ioStrategy) {
+    public Storage setIoStrategy(IOStrategy ioStrategy) {
         this.ioStrategy = ioStrategy;
+
+        return this;
     }
 
     @Override
@@ -53,7 +55,7 @@ public abstract class AbstractUniversalFileStorage extends AbstractStorage<File>
     @Override
     protected Resume getItem(File file) {
         try {
-            return ioStrategy.input(file);
+            return ioStrategy.input(new BufferedInputStream(new FileInputStream(file)));
         } catch (Exception e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -85,7 +87,7 @@ public abstract class AbstractUniversalFileStorage extends AbstractStorage<File>
 
     protected void saveFile(File file, Resume resume) {
         try {
-            ioStrategy.output(resume, file);
+            ioStrategy.output(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }

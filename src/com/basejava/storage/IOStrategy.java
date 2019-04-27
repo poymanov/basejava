@@ -2,11 +2,11 @@ package com.basejava.storage;
 
 import com.basejava.model.Resume;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public interface IOStrategy {
-    void output(Resume resume, File file) throws FileNotFoundException;
+    void output(Resume resume, OutputStream os);
 
-    Resume input(File file);
+    Resume input(InputStream is);
 }
