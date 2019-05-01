@@ -7,29 +7,19 @@ import java.util.*;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        Map<ContactType, Contact> contacts = getContacts();
+
         Map<SectionType, AbstractSection> sections = getSections();
 
         Resume resume = new Resume("Григорий Кислин");
-        resume.setContacts(contacts);
+        setContacts(resume);
+
         resume.setSections(sections);
 
         System.out.println(resume.getFullName() + "\n");
 
         // Вывод контактов
         for (Map.Entry<ContactType, Contact> item : resume.getContacts().entrySet()) {
-            String contact = item.getKey().getTitle() + ": ";
-
-            if (item.getKey() == ContactType.GITHUB ||
-                    item.getKey() == ContactType.URL ||
-                    item.getKey() == ContactType.LINKEDIN ||
-                    item.getKey() == ContactType.STACKOVERFLOW) {
-                contact += item.getValue().getLink();
-            } else {
-                contact += item.getValue().getTitle();
-            }
-
-            System.out.println(contact);
+            System.out.println(item.getKey().getTitle() + ": " + item.getValue().getTitle());
         }
 
         System.out.println("");
@@ -44,15 +34,25 @@ public class ResumeTestData {
     private static Map<ContactType, Contact> getContacts() {
         Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
 
-        contacts.put(ContactType.PHONE, new Contact("+7(921) 855-0482", null));
-        contacts.put(ContactType.SKYPE, new Contact("grigory.kislin", null));
-        contacts.put(ContactType.EMAIL, new Contact("gkislin@yandex.ru", null));
-        contacts.put(ContactType.LINKEDIN, new Contact("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin"));
-        contacts.put(ContactType.GITHUB, new Contact("Профиль GitHub", "https://github.com/gkislin"));
-        contacts.put(ContactType.STACKOVERFLOW, new Contact("Профиль Stackoverflow", "https://stackoverflow.com/users/54198473"));
-        contacts.put(ContactType.URL, new Contact("Домашняя страница", "http://gkislin.ru/"));
+        contacts.put(ContactType.PHONE, new Contact("+7(921) 855-0482"));
+        contacts.put(ContactType.SKYPE, new Contact("grigory.kislin"));
+        contacts.put(ContactType.EMAIL, new Contact("gkislin@yandex.ru"));
+        contacts.put(ContactType.LINKEDIN, new Contact("https://www.linkedin.com/in/gkislin"));
+        contacts.put(ContactType.GITHUB, new Contact("https://github.com/gkislin"));
+        contacts.put(ContactType.STACKOVERFLOW, new Contact("https://stackoverflow.com/users/54198473"));
+        contacts.put(ContactType.URL, new Contact("http://gkislin.ru/"));
 
         return contacts;
+    }
+
+    private static void setContacts(Resume resume) {
+        resume.addContact(ContactType.PHONE, "+7(921) 855-0482");
+        resume.addContact(ContactType.SKYPE, "grigory.kislin");
+        resume.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
+        resume.addContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        resume.addContact(ContactType.GITHUB, "https://github.com/gkislin");
+        resume.addContact(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/54198473");
+        resume.addContact(ContactType.URL, "http://gkislin.ru/");
     }
 
     private static Map<SectionType, AbstractSection> getSections() {

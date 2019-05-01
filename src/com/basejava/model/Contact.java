@@ -1,22 +1,18 @@
 package com.basejava.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Contact {
+public class Contact implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final String title;
-    private final String link;
 
-    public Contact(String title, String link) {
+    public Contact(String title) {
         this.title = title;
-        this.link = link;
     }
 
     public String getTitle() {
         return title;
-    }
-
-    public String getLink() {
-        return link;
     }
 
     @Override
@@ -24,12 +20,11 @@ public class Contact {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return title.equals(contact.title) &&
-                link.equals(contact.link);
+        return title.equals(contact.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, link);
+        return Objects.hash(title);
     }
 }

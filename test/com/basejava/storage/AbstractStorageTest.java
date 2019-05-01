@@ -2,17 +2,20 @@ package com.basejava.storage;
 
 import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
+import com.basejava.model.Contact;
+import com.basejava.model.ContactType;
 import com.basejava.model.Resume;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertSame;
-
 
 public abstract class AbstractStorageTest {
     protected static final String STORAGE_DIR = "./storage";
@@ -24,10 +27,21 @@ public abstract class AbstractStorageTest {
     private static final String UUID_4 = "uuid4";
     private static final String UUID_DUMMY = "dummy";
 
-    private static final Resume RESUME_1 = new Resume(UUID_1, "Test Name");
-    private static final Resume RESUME_2 = new Resume(UUID_2, "Test Name 2");
-    private static final Resume RESUME_3 = new Resume(UUID_3, "Test Name 3");
-    private static final Resume RESUME_4 = new Resume(UUID_4, "Test Name 4");
+    private static final Resume RESUME_1;
+    private static final Resume RESUME_2;
+    private static final Resume RESUME_3;
+    private static final Resume RESUME_4;
+
+    static {
+        RESUME_1 = new Resume(UUID_1, "Test Name");
+        RESUME_2 = new Resume(UUID_2, "Test Name 2");
+        RESUME_3 = new Resume(UUID_3, "Test Name 3");
+
+        RESUME_3.addContact(ContactType.PHONE, "+7(111) 111-1111");
+        RESUME_3.addContact(ContactType.EMAIL, "test@test.ru");
+
+        RESUME_4 = new Resume(UUID_4, "Test Name 4");
+    }
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -79,6 +93,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void get() {
         assertEquals(RESUME_1, storage.get(UUID_1));
+        assertEquals(RESUME_2, storage.get(UUID_2));
+        assertEquals(RESUME_3, storage.get(UUID_3));
     }
 
     @Test(expected = NotExistedStorageException.class)
