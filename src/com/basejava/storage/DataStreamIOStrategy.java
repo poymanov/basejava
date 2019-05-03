@@ -12,7 +12,7 @@ import java.util.Map;
 public class DataStreamIOStrategy implements IOStrategy {
 
     @Override
-    public void output(Resume resume, OutputStream os) {
+    public void output(Resume resume, OutputStream os) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
@@ -66,13 +66,11 @@ public class DataStreamIOStrategy implements IOStrategy {
             } else {
                 dos.writeBoolean(false);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write file");
         }
     }
 
     @Override
-    public Resume input(InputStream is) {
+    public Resume input(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
@@ -110,8 +108,6 @@ public class DataStreamIOStrategy implements IOStrategy {
             }
 
             return resume;
-        } catch (IOException e) {
-            throw new StorageException("Error read resume", null, e);
         }
     }
 

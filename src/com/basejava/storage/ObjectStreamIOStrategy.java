@@ -7,19 +7,17 @@ import java.io.*;
 
 public class ObjectStreamIOStrategy implements IOStrategy {
     @Override
-    public void output(Resume resume, OutputStream os) {
+    public void output(Resume resume, OutputStream os) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
             oos.writeObject(resume);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write file");
         }
     }
 
     @Override
-    public Resume input(InputStream is) {
+    public Resume input(InputStream is) throws IOException {
         try (ObjectInputStream ois = new ObjectInputStream(is)) {
             return (Resume) ois.readObject();
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException e) {
             throw new StorageException("Error read resume", null, e);
         }
     }
