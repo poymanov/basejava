@@ -2,13 +2,12 @@ package com.basejava.storage;
 
 import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
-import com.basejava.model.Contact;
-import com.basejava.model.ContactType;
-import com.basejava.model.Resume;
+import com.basejava.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -39,6 +38,44 @@ public abstract class AbstractStorageTest {
 
         RESUME_3.addContact(ContactType.PHONE, "+7(111) 111-1111");
         RESUME_3.addContact(ContactType.EMAIL, "test@test.ru");
+        RESUME_3.addSection(SectionType.OBJECTIVE, new TextSection("Objective"));
+        RESUME_3.addSection(SectionType.PERSONAL, new TextSection("Personal"));
+
+        ArrayList<String> achievementData = new ArrayList<>();
+        achievementData.add("Achievement 1");
+        achievementData.add("Achievement 2");
+
+        RESUME_3.addSection(SectionType.ACHIEVEMENT, new ListSection(achievementData));
+
+        ArrayList<String> qualificationsData = new ArrayList<>();
+        qualificationsData.add("Qualification 1");
+        qualificationsData.add("Qualification 2");
+
+        RESUME_3.addSection(SectionType.QUALIFICATIONS, new ListSection(qualificationsData));
+
+        OrganizationList organization1 = new OrganizationList("Title 1", new ArrayList<OrganizationItem>() {{
+            add(new OrganizationItem("Title 1.1", "Description 1.1",
+                    LocalDate.of(2019, 10, 1), null));
+            add(new OrganizationItem("Title 1.2", "Description 1.2",
+                    LocalDate.of(2019, 8, 1), LocalDate.of(2019, 9, 1)));
+        }});
+
+        ArrayList<OrganizationList> experienceList = new ArrayList<>();
+        experienceList.add(organization1);
+
+        RESUME_3.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceList));
+
+        OrganizationList organization2 = new OrganizationList("Title 2", new ArrayList<OrganizationItem>() {{
+            add(new OrganizationItem("Title 2.1", "Description 2.1",
+                    LocalDate.of(2019, 8, 1), null));
+            add(new OrganizationItem("Title 2.2", "Description 2.2",
+                    LocalDate.of(2019, 6, 1), LocalDate.of(2019, 7, 1)));
+        }});
+
+        ArrayList<OrganizationList> educationList = new ArrayList<>();
+        educationList.add(organization2);
+
+        RESUME_3.addSection(SectionType.EDUCATION, new OrganizationSection(educationList));
 
         RESUME_4 = new Resume(UUID_4, "Test Name 4");
     }

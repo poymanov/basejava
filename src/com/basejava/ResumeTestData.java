@@ -7,13 +7,9 @@ import java.util.*;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-
-        Map<SectionType, AbstractSection> sections = getSections();
-
         Resume resume = new Resume("Григорий Кислин");
         setContacts(resume);
-
-        resume.setSections(sections);
+        setSections(resume);
 
         System.out.println(resume.getFullName() + "\n");
 
@@ -55,18 +51,13 @@ public class ResumeTestData {
         resume.addContact(ContactType.URL, "http://gkislin.ru/");
     }
 
-    private static Map<SectionType, AbstractSection> getSections() {
-        Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
-
-        sections.put(SectionType.OBJECTIVE, getObjective());
-        sections.put(SectionType.PERSONAL, getPersonal());
-        sections.put(SectionType.ACHIEVEMENT, getAchievement());
-        sections.put(SectionType.QUALIFICATIONS, getQualifications());
-        sections.put(SectionType.EXPERIENCE, getExperience());
-        sections.put(SectionType.EDUCATION, getEducation());
-
-        return sections;
-
+    private static void setSections(Resume resume) {
+        resume.addSection(SectionType.OBJECTIVE, getObjective());
+        resume.addSection(SectionType.PERSONAL, getPersonal());
+        resume.addSection(SectionType.ACHIEVEMENT, getAchievement());
+        resume.addSection(SectionType.QUALIFICATIONS, getQualifications());
+        resume.addSection(SectionType.EXPERIENCE, getExperience());
+        resume.addSection(SectionType.EDUCATION, getEducation());
     }
 
     private static TextSection getObjective() {

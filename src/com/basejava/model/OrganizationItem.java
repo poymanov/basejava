@@ -3,6 +3,7 @@ package com.basejava.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class OrganizationItem implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -54,22 +55,16 @@ public class OrganizationItem implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         OrganizationItem that = (OrganizationItem) o;
-
-        if (!title.equals(that.title)) return false;
-        if (!description.equals(that.description)) return false;
-        if (!periodFrom.equals(that.periodFrom)) return false;
-        return periodTo.equals(that.periodTo);
+        return title.equals(that.title) &&
+                description.equals(that.description) &&
+                periodFrom.equals(that.periodFrom) &&
+                Objects.equals(periodTo, that.periodTo);
     }
 
     @Override
     public int hashCode() {
-        int result = title.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + periodFrom.hashCode();
-        result = 31 * result + periodTo.hashCode();
-        return result;
+        return Objects.hash(title, description, periodFrom, periodTo);
     }
 
     @Override
