@@ -2,6 +2,7 @@ package com.basejava.storage;
 
 import com.basejava.exceptions.StorageException;
 import com.basejava.model.Resume;
+import com.basejava.storage.ioStrategy.IOStrategy;
 
 import java.io.*;
 import java.nio.file.Files;

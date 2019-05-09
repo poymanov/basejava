@@ -1,4 +1,4 @@
-package com.basejava.storage;
+package com.basejava.storage.ioStrategy;
 
 import com.basejava.model.Resume;
 

@@ -1,7 +1,8 @@
-package com.basejava.storage;
+package com.basejava.storage.ioStrategy;
 
 import com.basejava.exceptions.StorageException;
 import com.basejava.model.Resume;
+import com.basejava.storage.ioStrategy.IOStrategy;
 
 import java.io.*;
 

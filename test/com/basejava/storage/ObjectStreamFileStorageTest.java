@@ -1,5 +1,7 @@
 package com.basejava.storage;
 
+import com.basejava.storage.ioStrategy.ObjectStreamIOStrategy;
+
 import java.io.File;
 
 public class ObjectStreamFileStorageTest extends AbstractStorageTest {

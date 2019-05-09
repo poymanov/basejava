@@ -1,7 +1,7 @@
-package com.basejava.storage;
+package com.basejava.storage.ioStrategy;
 
-import com.basejava.exceptions.StorageException;
 import com.basejava.model.*;
+import com.basejava.storage.ioStrategy.IOStrategy;
 
 import java.io.*;
 import java.time.LocalDate;
