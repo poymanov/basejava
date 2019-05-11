@@ -1,13 +1,14 @@
 package com.basejava.storage.ioStrategy;
 
 import com.basejava.model.*;
-import com.basejava.storage.ioStrategy.IOStrategy;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.basejava.model.SectionType.*;
 
 public class DataStreamIOStrategy implements IOStrategy {
 
@@ -25,46 +26,31 @@ public class DataStreamIOStrategy implements IOStrategy {
                 dos.writeUTF(entry.getValue().getTitle());
             }
 
-            if (resume.getSections().get(SectionType.OBJECTIVE) != null) {
-                dos.writeBoolean(true);
-                dos.writeUTF(((TextSection) resume.getSections().get(SectionType.OBJECTIVE)).getTitle());
-            } else {
-                dos.writeBoolean(false);
-            }
+            for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
+                dos.writeUTF(entry.getKey().name());
 
-            if (resume.getSections().get(SectionType.PERSONAL) != null) {
-                dos.writeBoolean(true);
-                dos.writeUTF(((TextSection) resume.getSections().get(SectionType.PERSONAL)).getTitle());
-            } else {
-                dos.writeBoolean(false);
-            }
-
-            if (resume.getSections().get(SectionType.ACHIEVEMENT) != null) {
-                dos.writeBoolean(true);
-                writeListSection(dos, ((ListSection) resume.getSections().get(SectionType.ACHIEVEMENT)).getItems());
-            } else {
-                dos.writeBoolean(false);
-            }
-
-            if (resume.getSections().get(SectionType.QUALIFICATIONS) != null) {
-                dos.writeBoolean(true);
-                writeListSection(dos, ((ListSection) resume.getSections().get(SectionType.QUALIFICATIONS)).getItems());
-            } else {
-                dos.writeBoolean(false);
-            }
-
-            if (resume.getSections().get(SectionType.EXPERIENCE) != null) {
-                dos.writeBoolean(true);
-                writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(SectionType.EXPERIENCE)).getItems());
-            } else {
-                dos.writeBoolean(false);
-            }
-
-            if (resume.getSections().get(SectionType.EDUCATION) != null) {
-                dos.writeBoolean(true);
-                writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(SectionType.EDUCATION)).getItems());
-            } else {
-                dos.writeBoolean(false);
+                switch (entry.getKey()) {
+                    case OBJECTIVE:
+                        dos.writeUTF(((TextSection) resume.getSections().get(OBJECTIVE)).getTitle());
+                        break;
+                    case PERSONAL:
+                        dos.writeUTF(((TextSection) resume.getSections().get(PERSONAL)).getTitle());
+                        break;
+                    case ACHIEVEMENT:
+                        writeListSection(dos, ((ListSection) resume.getSections().get(SectionType.ACHIEVEMENT)).getItems());
+                        break;
+                    case QUALIFICATIONS:
+                        writeListSection(dos, ((ListSection) resume.getSections().get(QUALIFICATIONS)).getItems());
+                        break;
+                    case EXPERIENCE:
+                        writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(EXPERIENCE)).getItems());
+                        break;
+                    case EDUCATION:
+                        writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(EDUCATION)).getItems());
+                        break;
+                    default:
+                        continue;
+                }
             }
         }
     }
@@ -83,28 +69,31 @@ public class DataStreamIOStrategy implements IOStrategy {
                 resume.addContact(contactType, dis.readUTF());
             }
 
-            if (dis.readBoolean()) {
-                resume.addSection(SectionType.OBJECTIVE, new TextSection(dis.readUTF()));
-            }
+            while (dis.available() > 0) {
+                SectionType section = SectionType.valueOf(dis.readUTF());
 
-            if (dis.readBoolean()) {
-                resume.addSection(SectionType.PERSONAL, new TextSection(dis.readUTF()));
-            }
-
-            if (dis.readBoolean()) {
-                readListSection(dis, resume, SectionType.ACHIEVEMENT, dis.readInt());
-            }
-
-            if (dis.readBoolean()) {
-                readListSection(dis, resume, SectionType.QUALIFICATIONS, dis.readInt());
-            }
-
-            if (dis.readBoolean()) {
-                readOrganizationSection(dis, resume, SectionType.EXPERIENCE);
-            }
-
-            if (dis.readBoolean()) {
-                readOrganizationSection(dis, resume, SectionType.EDUCATION);
+                switch (section) {
+                    case OBJECTIVE:
+                        resume.addSection(OBJECTIVE, new TextSection(dis.readUTF()));
+                        break;
+                    case PERSONAL:
+                        resume.addSection(PERSONAL, new TextSection(dis.readUTF()));
+                        break;
+                    case ACHIEVEMENT:
+                        readListSection(dis, resume, ACHIEVEMENT, dis.readInt());
+                        break;
+                    case QUALIFICATIONS:
+                        readListSection(dis, resume, QUALIFICATIONS, dis.readInt());
+                        break;
+                    case EXPERIENCE:
+                        readOrganizationSection(dis, resume, EXPERIENCE);
+                        break;
+                    case EDUCATION:
+                        readOrganizationSection(dis, resume, EDUCATION);
+                        break;
+                    default:
+                        break;
+                }
             }
 
             return resume;
