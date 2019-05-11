@@ -8,6 +8,7 @@ public class Contact implements Serializable {
     private final String title;
 
     public Contact(String title) {
+        Objects.requireNonNull(this, "Title must not be null");
         this.title = title;
     }
 
