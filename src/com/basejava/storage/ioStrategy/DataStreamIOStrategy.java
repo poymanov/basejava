@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.basejava.model.SectionType.*;
-
 public class DataStreamIOStrategy implements IOStrategy {
 
     @Override
@@ -31,25 +29,19 @@ public class DataStreamIOStrategy implements IOStrategy {
 
                 switch (entry.getKey()) {
                     case OBJECTIVE:
-                        dos.writeUTF(((TextSection) resume.getSections().get(OBJECTIVE)).getTitle());
-                        break;
                     case PERSONAL:
-                        dos.writeUTF(((TextSection) resume.getSections().get(PERSONAL)).getTitle());
+                        dos.writeUTF(((TextSection) resume.getSections().get(entry.getKey())).getTitle());
                         break;
                     case ACHIEVEMENT:
-                        writeListSection(dos, ((ListSection) resume.getSections().get(SectionType.ACHIEVEMENT)).getItems());
-                        break;
                     case QUALIFICATIONS:
-                        writeListSection(dos, ((ListSection) resume.getSections().get(QUALIFICATIONS)).getItems());
+                        writeListSection(dos, ((ListSection) resume.getSections().get(entry.getKey())).getItems());
                         break;
                     case EXPERIENCE:
-                        writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(EXPERIENCE)).getItems());
-                        break;
                     case EDUCATION:
-                        writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(EDUCATION)).getItems());
+                        writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(entry.getKey())).getItems());
                         break;
                     default:
-                        continue;
+                        break;
                 }
             }
         }
@@ -74,22 +66,16 @@ public class DataStreamIOStrategy implements IOStrategy {
 
                 switch (section) {
                     case OBJECTIVE:
-                        resume.addSection(OBJECTIVE, new TextSection(dis.readUTF()));
-                        break;
                     case PERSONAL:
-                        resume.addSection(PERSONAL, new TextSection(dis.readUTF()));
+                        resume.addSection(section, new TextSection(dis.readUTF()));
                         break;
                     case ACHIEVEMENT:
-                        readListSection(dis, resume, ACHIEVEMENT, dis.readInt());
-                        break;
                     case QUALIFICATIONS:
-                        readListSection(dis, resume, QUALIFICATIONS, dis.readInt());
+                        readListSection(dis, resume, section, dis.readInt());
                         break;
                     case EXPERIENCE:
-                        readOrganizationSection(dis, resume, EXPERIENCE);
-                        break;
                     case EDUCATION:
-                        readOrganizationSection(dis, resume, EDUCATION);
+                        readOrganizationSection(dis, resume, section);
                         break;
                     default:
                         break;
@@ -112,12 +98,7 @@ public class DataStreamIOStrategy implements IOStrategy {
                 dos.writeUTF(subitem.getTitle());
                 dos.writeUTF(subitem.getDescription());
                 dos.writeUTF(subitem.getPeriodFrom().toString());
-
-                if (subitem.getPeriodTo() != null) {
-                    dos.writeUTF(subitem.getPeriodTo().toString());
-                } else {
-                    dos.writeUTF("-");
-                }
+                dos.writeUTF(subitem.getPeriodTo() == null ? "" : subitem.getPeriodTo().toString());
             }
         }
     }
@@ -159,11 +140,7 @@ public class DataStreamIOStrategy implements IOStrategy {
                 String periodToString = dis.readUTF();
 
                 LocalDate periodFrom = LocalDate.parse(periodFromString);
-                LocalDate periodTo = null;
-
-                if (!periodToString.equals("-")) {
-                    periodTo = LocalDate.parse(periodToString);
-                }
+                LocalDate periodTo = periodToString.isEmpty() ? null : LocalDate.parse(periodToString);
 
                 organizationItems.add(new OrganizationItem(itemTitle, description, periodFrom, periodTo));
             }
