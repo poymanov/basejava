@@ -1,8 +1,5 @@
 package com.basejava.model;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Objects;
 
 public class TextSection extends AbstractSection {
@@ -11,7 +8,7 @@ public class TextSection extends AbstractSection {
     private String title;
 
     public TextSection(String title) {
-        Objects.requireNonNull(title, "Title must not be null");
+        Objects.requireNonNull(this, "Title must not be null");
         this.title = title;
     }
 
@@ -39,10 +36,5 @@ public class TextSection extends AbstractSection {
     @Override
     public String toString() {
         return title;
-    }
-
-    @Override
-    public void writeDS(DataOutputStream dos) throws IOException {
-        dos.writeUTF(title);
     }
 }

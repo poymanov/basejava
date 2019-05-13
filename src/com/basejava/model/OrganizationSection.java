@@ -1,7 +1,5 @@
 package com.basejava.model;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -44,23 +42,5 @@ public class OrganizationSection extends AbstractSection {
     @Override
     public int hashCode() {
         return Objects.hash(items);
-    }
-
-    @Override
-    public void writeDS(DataOutputStream dos) throws IOException {
-        dos.writeInt(items.size());
-
-        for (OrganizationList item : items) {
-            dos.writeUTF(item.getTitle());
-
-            dos.writeInt(item.getItems().size());
-
-            for (OrganizationItem subitem : item.getItems()) {
-                dos.writeUTF(subitem.getTitle());
-                dos.writeUTF(subitem.getDescription());
-                dos.writeUTF(subitem.getPeriodFrom().toString());
-                dos.writeUTF(subitem.getPeriodTo() == null ? "" : subitem.getPeriodTo().toString());
-            }
-        }
     }
 }

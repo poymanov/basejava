@@ -1,7 +1,5 @@
 package com.basejava.model;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -44,14 +42,5 @@ public class ListSection extends AbstractSection {
         }
 
         return content.toString();
-    }
-
-    @Override
-    public void writeDS(DataOutputStream dos) throws IOException {
-        dos.writeInt(items.size());
-
-        for (String item : items) {
-            dos.writeUTF(item);
-        }
     }
 }
