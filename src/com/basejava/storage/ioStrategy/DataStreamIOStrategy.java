@@ -1,5 +1,6 @@
 package com.basejava.storage.ioStrategy;
 
+import com.basejava.DataWriter;
 import com.basejava.model.*;
 
 import java.io.*;
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DataStreamIOStrategy implements IOStrategy {
 
@@ -24,26 +26,14 @@ public class DataStreamIOStrategy implements IOStrategy {
                 dos.writeUTF(entry.getValue().getTitle());
             }
 
-            for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
-                dos.writeUTF(entry.getKey().name());
+            writeWithException(resume.getSections(), dos, new DataWriter());
+        }
+    }
 
-                switch (entry.getKey()) {
-                    case OBJECTIVE:
-                    case PERSONAL:
-                        dos.writeUTF(((TextSection) resume.getSections().get(entry.getKey())).getTitle());
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        writeListSection(dos, ((ListSection) resume.getSections().get(entry.getKey())).getItems());
-                        break;
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(entry.getKey())).getItems());
-                        break;
-                    default:
-                        break;
-                }
-            }
+    private void writeWithException(Map<SectionType, AbstractSection> sections, DataOutputStream dos, DataWriter dataWriter) throws IOException {
+        for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
+            dos.writeUTF(entry.getKey().name());
+            dataWriter.write(entry.getKey(), entry.getValue(), dos);
         }
     }
 
@@ -83,31 +73,6 @@ public class DataStreamIOStrategy implements IOStrategy {
             }
 
             return resume;
-        }
-    }
-
-    private void writeOrganizationSection(DataOutputStream dos, List<OrganizationList> items) throws IOException {
-        dos.writeInt(items.size());
-
-        for (OrganizationList item : items) {
-            dos.writeUTF(item.getTitle());
-
-            dos.writeInt(item.getItems().size());
-
-            for (OrganizationItem subitem : item.getItems()) {
-                dos.writeUTF(subitem.getTitle());
-                dos.writeUTF(subitem.getDescription());
-                dos.writeUTF(subitem.getPeriodFrom().toString());
-                dos.writeUTF(subitem.getPeriodTo() == null ? "" : subitem.getPeriodTo().toString());
-            }
-        }
-    }
-
-    private void writeListSection(DataOutputStream dos, List<String> items) throws IOException {
-        dos.writeInt(items.size());
-
-        for (String item : items) {
-            dos.writeUTF(item);
         }
     }
 
