@@ -5,6 +5,7 @@ import com.basejava.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,31 +20,37 @@ public class DataStreamIOStrategy implements IOStrategy {
             Map<ContactType, Contact> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
 
-            for (Map.Entry<ContactType, Contact> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue().getTitle());
-            }
+            writeWithExceptions(contacts, dos, (ds, key, value) -> {
+                dos.writeUTF(((Contact) value).getTitle());
+            });
 
-            for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
-                dos.writeUTF(entry.getKey().name());
+            writeWithExceptions(resume.getSections(), dos, (ds, key, value) -> {
+                SectionType section = SectionType.valueOf(key.name());
 
-                switch (entry.getKey()) {
+                switch (section) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        dos.writeUTF(((TextSection) resume.getSections().get(entry.getKey())).getTitle());
+                        dos.writeUTF(((TextSection) value).getTitle());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        writeListSection(dos, ((ListSection) resume.getSections().get(entry.getKey())).getItems());
+                        writeListSection(dos, ((ListSection) value).getItems());
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        writeOrganizationSection(dos, ((OrganizationSection) resume.getSections().get(entry.getKey())).getItems());
+                        writeOrganizationSection(dos, ((OrganizationSection) value).getItems());
                         break;
                     default:
                         break;
                 }
-            }
+            });
+        }
+    }
+
+    private <Key extends Enum, Value> void writeWithExceptions(Map<Key, Value> collection, DataOutputStream dos, DataWriter dataWriter) throws IOException {
+        for (Map.Entry<Key, Value> entry: collection.entrySet()) {
+            dos.writeUTF(entry.getKey().name());
+            dataWriter.write(dos, entry.getKey(), entry.getValue());
         }
     }
 
