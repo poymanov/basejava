@@ -4,10 +4,7 @@ import com.basejava.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataStreamIOStrategy implements IOStrategy {
 
@@ -20,37 +17,32 @@ public class DataStreamIOStrategy implements IOStrategy {
             Map<ContactType, Contact> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
 
-            writeWithExceptions(contacts, dos, (ds, key, value) -> {
-                dos.writeUTF(((Contact) value).getTitle());
+            writeWithExceptions(contacts.entrySet(), item -> {
+                dos.writeUTF(item.getKey().name());
+                dos.writeUTF(item.getValue().getTitle());
             });
 
-            writeWithExceptions(resume.getSections(), dos, (ds, key, value) -> {
-                SectionType section = SectionType.valueOf(key.name());
+            writeWithExceptions(resume.getSections().entrySet(), item -> {
+                dos.writeUTF(item.getKey().name());
+                SectionType section = SectionType.valueOf(item.getKey().name());
 
                 switch (section) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        dos.writeUTF(((TextSection) value).getTitle());
+                        dos.writeUTF(((TextSection) item.getValue()).getTitle());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        writeListSection(dos, ((ListSection) value).getItems());
+                        writeListSection(dos, ((ListSection) item.getValue()).getItems());
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        writeOrganizationSection(dos, ((OrganizationSection) value).getItems());
+                        writeOrganizationSection(dos, ((OrganizationSection) item.getValue()).getItems());
                         break;
                     default:
                         break;
                 }
             });
-        }
-    }
-
-    private <Key extends Enum, Value> void writeWithExceptions(Map<Key, Value> collection, DataOutputStream dos, DataWriter dataWriter) throws IOException {
-        for (Map.Entry<Key, Value> entry: collection.entrySet()) {
-            dos.writeUTF(entry.getKey().name());
-            dataWriter.write(dos, entry.getKey(), entry.getValue());
         }
     }
 
@@ -96,26 +88,22 @@ public class DataStreamIOStrategy implements IOStrategy {
     private void writeOrganizationSection(DataOutputStream dos, List<OrganizationList> items) throws IOException {
         dos.writeInt(items.size());
 
-        for (OrganizationList item : items) {
+        writeWithExceptions(items, item -> {
             dos.writeUTF(item.getTitle());
-
             dos.writeInt(item.getItems().size());
 
-            for (OrganizationItem subitem : item.getItems()) {
+            writeWithExceptions(item.getItems(), subitem -> {
                 dos.writeUTF(subitem.getTitle());
                 dos.writeUTF(subitem.getDescription());
                 dos.writeUTF(subitem.getPeriodFrom().toString());
                 dos.writeUTF(subitem.getPeriodTo() == null ? "" : subitem.getPeriodTo().toString());
-            }
-        }
+            });
+        });
     }
 
     private void writeListSection(DataOutputStream dos, List<String> items) throws IOException {
         dos.writeInt(items.size());
-
-        for (String item : items) {
-            dos.writeUTF(item);
-        }
+        writeWithExceptions(items, dos::writeUTF);
     }
 
     private void readListSection(DataInputStream dis, Resume resume, SectionType type, int size) throws IOException {
@@ -156,5 +144,11 @@ public class DataStreamIOStrategy implements IOStrategy {
         }
 
         resume.addSection(type, new OrganizationSection(organizationList));
+    }
+
+    private <T> void writeWithExceptions(Collection<T> collection, DataWriter<T> dataWriter) throws IOException {
+        for (T item: collection) {
+            dataWriter.write(item);
+        }
     }
 }
