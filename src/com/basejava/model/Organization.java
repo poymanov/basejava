@@ -2,17 +2,26 @@ package com.basejava.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
-public class OrganizationList implements Serializable {
+public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String title;
 
-    private List<OrganizationItem> items;
+    private String url;
 
-    public OrganizationList(String title, List<OrganizationItem> items) {
+    private List<Position> items;
+
+    public Organization(String title, List<Position> items) {
+        Objects.requireNonNull(title, "Title must not be null");
         this.title = title;
         this.items = items;
+    }
+
+    public Organization(String title, String url, List<Position> items) {
+        this(title, items);
+        this.url = url;
     }
 
     public String getTitle() {
@@ -23,11 +32,19 @@ public class OrganizationList implements Serializable {
         this.title = title;
     }
 
-    public List<OrganizationItem> getItems() {
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public List<Position> getItems() {
         return items;
     }
 
-    public void setItems(List<OrganizationItem> items) {
+    public void setItems(List<Position> items) {
         this.items = items;
     }
 
@@ -36,7 +53,7 @@ public class OrganizationList implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrganizationList that = (OrganizationList) o;
+        Organization that = (Organization) o;
 
         if (!title.equals(that.title)) return false;
         return items.equals(that.items);
@@ -56,7 +73,7 @@ public class OrganizationList implements Serializable {
         content.append(title);
         content.append("\n");
 
-        for (OrganizationItem item : items) {
+        for (Position item : items) {
             content.append(item);
         }
 

@@ -6,17 +6,17 @@ import java.util.Objects;
 public class OrganizationSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
-    private ArrayList<OrganizationList> items;
+    private ArrayList<Organization> items;
 
-    public OrganizationSection(ArrayList<OrganizationList> items) {
+    public OrganizationSection(ArrayList<Organization> items) {
         this.items = items;
     }
 
-    public ArrayList<OrganizationList> getItems() {
+    public ArrayList<Organization> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<OrganizationList> items) {
+    public void setItems(ArrayList<Organization> items) {
         this.items = items;
     }
 
@@ -24,7 +24,7 @@ public class OrganizationSection extends AbstractSection {
     public String toString() {
         StringBuilder content = new StringBuilder();
 
-        for (OrganizationList item : items) {
+        for (Organization item : items) {
             content.append(item).append("\n\n");
         }
 

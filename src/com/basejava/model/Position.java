@@ -5,18 +5,24 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class OrganizationItem implements Serializable {
+public class Position implements Serializable {
     private static final long serialVersionUID = 1L;
     private String title;
     private String description;
     private LocalDate periodFrom;
     private LocalDate periodTo;
 
-    public OrganizationItem(String title, String description, LocalDate periodFrom, LocalDate periodTo) {
+    public Position(String title, LocalDate periodFrom, LocalDate periodTo) {
+        Objects.requireNonNull(title, "Title must not be null");
+        Objects.requireNonNull(periodFrom, "Period from must not be null");
         this.title = title;
-        this.description = description;
         this.periodFrom = periodFrom;
         this.periodTo = periodTo;
+    }
+
+    public Position(String title, String description, LocalDate periodFrom, LocalDate periodTo) {
+        this(title, periodFrom, periodTo);
+        this.description = description;
     }
 
     public String getTitle() {
@@ -55,16 +61,14 @@ public class OrganizationItem implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrganizationItem that = (OrganizationItem) o;
+        Position that = (Position) o;
         return title.equals(that.title) &&
-                description.equals(that.description) &&
-                periodFrom.equals(that.periodFrom) &&
-                Objects.equals(periodTo, that.periodTo);
+                periodFrom.equals(that.periodFrom);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, periodFrom, periodTo);
+        return Objects.hash(title, periodFrom);
     }
 
     @Override

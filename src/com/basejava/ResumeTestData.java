@@ -98,73 +98,73 @@ public class ResumeTestData {
     }
 
     private static OrganizationSection getExperience() {
-        ArrayList<OrganizationList> experienceList = new ArrayList<>();
+        ArrayList<Organization> experienceList = new ArrayList<>();
 
-        OrganizationItem item1 = new OrganizationItem("Автор проекта",
+        Position item1 = new Position("Автор проекта",
                 "Создание, организация и проведение Java онлайн проектов и стажировок.",
                 LocalDate.of(2013, 10, 1), null);
 
 
-        OrganizationList organization1 = new OrganizationList("Java Online Projects", new ArrayList<OrganizationItem>() {{
+        Organization organization1 = new Organization("Java Online Projects", new ArrayList<Position>() {{
             add(item1);
         }});
 
 
-        OrganizationItem item2 = new OrganizationItem("Старший разработчик (backend)",
+        Position item2 = new Position("Старший разработчик (backend)",
                 "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.",
                 LocalDate.of(2014, 10, 1), LocalDate.of(2016, 1, 1));
 
-        OrganizationList organization2 = new OrganizationList("Wrike", new ArrayList<OrganizationItem>() {{
+        Organization organization2 = new Organization("Wrike", new ArrayList<Position>() {{
             add(item2);
         }});
 
-        OrganizationItem item3 = new OrganizationItem("Java архитектор",
+        Position item3 = new Position("Java архитектор",
                 "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python",
                 LocalDate.of(2012, 4, 1), LocalDate.of(2014, 10, 1));
 
-        OrganizationList organization3 = new OrganizationList("RIT Center", new ArrayList<OrganizationItem>() {{
+        Organization organization3 = new Organization("RIT Center", new ArrayList<Position>() {{
             add(item3);
         }});
 
 
-        OrganizationItem item4 = new OrganizationItem("Ведущий программист",
+        Position item4 = new Position("Ведущий программист",
                 "Участие в проекте Deutsche Bank CRM (WebLogic, Hibernate, Spring, Spring MVC, SmartGWT, GWT, Jasper, Oracle). Реализация клиентской и серверной части CRM. Реализация RIA-приложения для администрирования, мониторинга и анализа результатов в области алгоритмического трейдинга. JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Highstock, Commet, HTML5.",
                 LocalDate.of(2010, 12, 1), LocalDate.of(2012, 4, 1));
 
-        OrganizationList organization4 = new OrganizationList("Luxoft (Deutsche Bank)", new ArrayList<OrganizationItem>() {{
+        Organization organization4 = new Organization("Luxoft (Deutsche Bank)", new ArrayList<Position>() {{
             add(item4);
         }});
 
 
-        OrganizationItem item5 = new OrganizationItem("Ведущий специалист",
+        Position item5 = new Position("Ведущий специалист",
                 "Дизайн и имплементация Java EE фреймворка для отдела \"Платежные Системы\" (GlassFish v2.1, v3, OC4J, EJB3, JAX-WS RI 2.1, Servlet 2.4, JSP, JMX, JMS, Maven2). Реализация администрирования, статистики и мониторинга фреймворка. Разработка online JMX клиента (Python/ Jython, Django, ExtJS)",
                 LocalDate.of(2008, 6, 1), LocalDate.of(2010, 12, 1));
 
-        OrganizationList organization5 = new OrganizationList("Yota", new ArrayList<OrganizationItem>() {{
+        Organization organization5 = new Organization("Yota", new ArrayList<Position>() {{
             add(item5);
         }});
 
-        OrganizationItem item6 = new OrganizationItem("Разработчик ПО",
+        Position item6 = new Position("Разработчик ПО",
                 "Реализация клиентской (Eclipse RCP) и серверной (JBoss 4.2, Hibernate 3.0, Tomcat, JMS) частей кластерного J2EE приложения (OLAP, Data mining).",
                 LocalDate.of(2007, 3, 1), LocalDate.of(2008, 6, 1));
 
-        OrganizationList organization6 = new OrganizationList("Enkata", new ArrayList<OrganizationItem>() {{
+        Organization organization6 = new Organization("Enkata", new ArrayList<Position>() {{
             add(item6);
         }});
 
-        OrganizationItem item7 = new OrganizationItem("Разработчик ПО",
+        Position item7 = new Position("Разработчик ПО",
                 "Разработка информационной модели, проектирование интерфейсов, реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix).",
                 LocalDate.of(2005, 1, 1), LocalDate.of(2007, 2, 1));
 
-        OrganizationList organization7 = new OrganizationList("Siemens AG", new ArrayList<OrganizationItem>() {{
+        Organization organization7 = new Organization("Siemens AG", new ArrayList<Position>() {{
             add(item7);
         }});
 
-        OrganizationItem item8 = new OrganizationItem("Инженер по аппаратному и программному тестированию",
+        Position item8 = new Position("Инженер по аппаратному и программному тестированию",
                 "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM).",
                 LocalDate.of(1997, 9, 1), LocalDate.of(2005, 1, 1));
 
-        OrganizationList organization8 = new OrganizationList("Alcatel", new ArrayList<OrganizationItem>() {{
+        Organization organization8 = new Organization("Alcatel", new ArrayList<Position>() {{
             add(item8);
         }});
 
@@ -181,53 +181,53 @@ public class ResumeTestData {
     }
 
     private static OrganizationSection getEducation() {
-        ArrayList<OrganizationList> educationList = new ArrayList<>();
+        ArrayList<Organization> educationList = new ArrayList<>();
 
-        OrganizationItem item1 = new OrganizationItem("\"Functional Programming Principles in Scala\" by Martin Odersky",
+        Position item1 = new Position("\"Functional Programming Principles in Scala\" by Martin Odersky",
                 null, LocalDate.of(2013, 3, 1), LocalDate.of(2013, 5, 1));
 
-        OrganizationList organization1 = new OrganizationList("Coursera", new ArrayList<OrganizationItem>() {{
+        Organization organization1 = new Organization("Coursera", new ArrayList<Position>() {{
             add(item1);
         }});
 
-        OrganizationItem item2 = new OrganizationItem("Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"",
+        Position item2 = new Position("Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"",
                 null, LocalDate.of(2011, 3, 1), LocalDate.of(2011, 4, 1));
 
-        OrganizationList organization2 = new OrganizationList("Luxoft", new ArrayList<OrganizationItem>() {{
+        Organization organization2 = new Organization("Luxoft", new ArrayList<Position>() {{
             add(item2);
         }});
 
-        OrganizationItem item3 = new OrganizationItem("3 месяца обучения мобильным IN сетям (Берлин)", null,
+        Position item3 = new Position("3 месяца обучения мобильным IN сетям (Берлин)", null,
                 LocalDate.of(2005, 1, 1), LocalDate.of(2005, 4, 1));
 
-        OrganizationList organization3 = new OrganizationList("Siemens AG", new ArrayList<OrganizationItem>() {{
+        Organization organization3 = new Organization("Siemens AG", new ArrayList<Position>() {{
             add(item3);
         }});
 
-        OrganizationItem item4 = new OrganizationItem("6 месяцев обучения цифровым телефонным сетям (Москва)", null,
+        Position item4 = new Position("6 месяцев обучения цифровым телефонным сетям (Москва)", null,
                 LocalDate.of(1997, 9, 1), LocalDate.of(1998, 3, 1));
 
-        OrganizationList organization4 = new OrganizationList("Alcatel", new ArrayList<OrganizationItem>() {{
+        Organization organization4 = new Organization("Alcatel", new ArrayList<Position>() {{
             add(item4);
         }});
 
-        OrganizationItem item5 = new OrganizationItem("Аспирантура (программист С, С++)", null,
+        Position item5 = new Position("Аспирантура (программист С, С++)", null,
                 LocalDate.of(1993, 9, 1), LocalDate.of(1996, 7, 1));
 
 
-        OrganizationItem item6 = new OrganizationItem("Инженер (программист Fortran, C)", null,
+        Position item6 = new Position("Инженер (программист Fortran, C)", null,
                 LocalDate.of(1997, 9, 1), LocalDate.of(1993, 7, 1));
 
-        OrganizationList organization5 = new OrganizationList("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики",
-                new ArrayList<OrganizationItem>() {{
+        Organization organization5 = new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики",
+                new ArrayList<Position>() {{
                     add(item5);
                     add(item6);
                 }});
 
-        OrganizationItem item7 = new OrganizationItem("Закончил с отличием", null,
+        Position item7 = new Position("Закончил с отличием", null,
                 LocalDate.of(1984, 9, 1), LocalDate.of(1997, 6, 1));
 
-        OrganizationList organization6 = new OrganizationList("Заочная физико-техническая школа при МФТИ", new ArrayList<OrganizationItem>() {{
+        Organization organization6 = new Organization("Заочная физико-техническая школа при МФТИ", new ArrayList<Position>() {{
             add(item7);
         }});
 

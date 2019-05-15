@@ -9,9 +9,6 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertSame;
@@ -53,26 +50,25 @@ public abstract class AbstractStorageTest {
 
         RESUME_3.addSection(SectionType.QUALIFICATIONS, new ListSection(qualificationsData));
 
-        OrganizationList organization1 = new OrganizationList("Title 1", new ArrayList<OrganizationItem>() {{
-            add(new OrganizationItem("Title 1.1", "Description 1.1",
-                    LocalDate.of(2019, 10, 1), null));
-            add(new OrganizationItem("Title 1.2", "Description 1.2",
+        Organization organization1 = new Organization("Title 1", "http://test.test", new ArrayList<Position>() {{
+            add(new Position("Title 1.1", LocalDate.of(2019, 10, 1), null));
+            add(new Position("Title 1.2", "Description 1.2",
                     LocalDate.of(2019, 8, 1), LocalDate.of(2019, 9, 1)));
         }});
 
-        ArrayList<OrganizationList> experienceList = new ArrayList<>();
+        ArrayList<Organization> experienceList = new ArrayList<>();
         experienceList.add(organization1);
 
         RESUME_3.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceList));
 
-        OrganizationList organization2 = new OrganizationList("Title 2", new ArrayList<OrganizationItem>() {{
-            add(new OrganizationItem("Title 2.1", "Description 2.1",
+        Organization organization2 = new Organization("Title 2", new ArrayList<Position>() {{
+            add(new Position("Title 2.1", "Description 2.1",
                     LocalDate.of(2019, 8, 1), null));
-            add(new OrganizationItem("Title 2.2", "Description 2.2",
+            add(new Position("Title 2.2",
                     LocalDate.of(2019, 6, 1), LocalDate.of(2019, 7, 1)));
         }});
 
-        ArrayList<OrganizationList> educationList = new ArrayList<>();
+        ArrayList<Organization> educationList = new ArrayList<>();
         educationList.add(organization2);
 
         RESUME_3.addSection(SectionType.EDUCATION, new OrganizationSection(educationList));

@@ -89,13 +89,16 @@ public class DataStreamIOStrategy implements IOStrategy {
         }
     }
 
-    private void writeOrganizationSection(DataOutputStream dos, List<OrganizationList> items) throws IOException {
+    private void writeOrganizationSection(DataOutputStream dos, List<Organization> items) throws IOException {
         writeWithExceptions(items, dos, item -> {
+            String url = item.getUrl();
             dos.writeUTF(item.getTitle());
+            dos.writeUTF(url == null ? "" : url);
 
             writeWithExceptions(item.getItems(), dos, subitem -> {
+                String description = subitem.getDescription();
                 dos.writeUTF(subitem.getTitle());
-                dos.writeUTF(subitem.getDescription());
+                dos.writeUTF(description == null ? "" : description);
                 dos.writeUTF(subitem.getPeriodFrom().toString());
                 dos.writeUTF(subitem.getPeriodTo() == null ? "" : subitem.getPeriodTo().toString());
             });
@@ -116,14 +119,19 @@ public class DataStreamIOStrategy implements IOStrategy {
     }
 
     private void readOrganizationSection(DataInputStream dis, Resume resume, SectionType type) throws IOException {
-        ArrayList<OrganizationList> organizationList = new ArrayList<>();
+        ArrayList<Organization> organization = new ArrayList<>();
 
         int allSize = dis.readInt();
 
         for (int i = 0; i < allSize; i++) {
             String title = dis.readUTF();
+            String url = dis.readUTF();
 
-            List<OrganizationItem> organizationItems = new ArrayList<>();
+            if (url.equals("")) {
+                url = null;
+            }
+
+            List<Position> positions = new ArrayList<>();
 
             int itemsSize = dis.readInt();
 
@@ -131,19 +139,23 @@ public class DataStreamIOStrategy implements IOStrategy {
                 String itemTitle = dis.readUTF();
                 String description = dis.readUTF();
 
+                if (description.equals("")) {
+                    description = null;
+                }
+
                 String periodFromString = dis.readUTF();
                 String periodToString = dis.readUTF();
 
                 LocalDate periodFrom = LocalDate.parse(periodFromString);
                 LocalDate periodTo = periodToString.isEmpty() ? null : LocalDate.parse(periodToString);
 
-                organizationItems.add(new OrganizationItem(itemTitle, description, periodFrom, periodTo));
+                positions.add(new Position(itemTitle, description, periodFrom, periodTo));
             }
 
-            organizationList.add(new OrganizationList(title, organizationItems));
+            organization.add(new Organization(title, url, positions));
         }
 
-        resume.addSection(type, new OrganizationSection(organizationList));
+        resume.addSection(type, new OrganizationSection(organization));
     }
 
     private <T> void writeWithExceptions(Collection<T> collection, DataOutputStream dos, DataWriter<T> dataWriter) throws IOException {
