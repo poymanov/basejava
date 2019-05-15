@@ -33,7 +33,7 @@ public class DataStreamIOStrategy implements IOStrategy {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        writeListSection(dos, ((ListSection) section).getItems());
+                        writeWithExceptions(((ListSection) section).getItems(), dos, dos::writeUTF);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
@@ -99,17 +99,9 @@ public class DataStreamIOStrategy implements IOStrategy {
         });
     }
 
-    private void writeListSection(DataOutputStream dos, List<String> items) throws IOException {
-        writeWithExceptions(items, dos, dos::writeUTF);
-    }
-
     private void readListSection(DataInputStream dis, Resume resume, SectionType type) throws IOException {
         ArrayList<String> data = new ArrayList<>();
-
-        readWithExceptions(dis, () -> {
-            data.add(dis.readUTF());
-        });
-
+        readWithExceptions(dis, () -> data.add(dis.readUTF()));
         resume.addSection(type, new ListSection(data));
     }
 
