@@ -53,37 +53,31 @@ public class DataStreamIOStrategy implements IOStrategy {
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
 
-            int contactsSize = dis.readInt();
-
-            for (int i = 0; i < contactsSize; i++) {
+            readWithExceptions(dis, () -> {
                 ContactType contactType = ContactType.valueOf(dis.readUTF());
                 resume.addContact(contactType, dis.readUTF());
-            }
+            });
 
-            int sectionsSize = dis.readInt();
+            readWithExceptions(dis, () -> {
+                SectionType section = SectionType.valueOf(dis.readUTF());
 
-            if (sectionsSize > 0) {
-                while (dis.available() > 0) {
-                    SectionType section = SectionType.valueOf(dis.readUTF());
-
-                    switch (section) {
-                        case OBJECTIVE:
-                        case PERSONAL:
-                            resume.addSection(section, new TextSection(dis.readUTF()));
-                            break;
-                        case ACHIEVEMENT:
-                        case QUALIFICATIONS:
-                            readListSection(dis, resume, section, dis.readInt());
-                            break;
-                        case EXPERIENCE:
-                        case EDUCATION:
-                            readOrganizationSection(dis, resume, section);
-                            break;
-                        default:
-                            break;
-                    }
+                switch (section) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        resume.addSection(section, new TextSection(dis.readUTF()));
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        readListSection(dis, resume, section);
+                        break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        readOrganizationSection(dis, resume, section);
+                        break;
+                    default:
+                        break;
                 }
-            }
+            });
 
             return resume;
         }
@@ -109,13 +103,22 @@ public class DataStreamIOStrategy implements IOStrategy {
         writeWithExceptions(items, dos, dos::writeUTF);
     }
 
-    private void readListSection(DataInputStream dis, Resume resume, SectionType type, int size) throws IOException {
-        ArrayList<String> data = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            data.add(dis.readUTF());
-        }
+    private void readListSection(DataInputStream dis, Resume resume, SectionType type) throws IOException {
+        readWithExceptions(dis, () -> {
+            ListSection listSection = (ListSection) resume.getSections().get(type);
 
-        resume.addSection(type, new ListSection(data));
+            if (listSection == null) {
+                listSection = new ListSection(new ArrayList<String>() {{
+                    add(dis.readUTF());
+                }});
+            } else {
+                ArrayList<String> list = listSection.getItems();
+                list.add(dis.readUTF());
+                listSection = new ListSection(list);
+            }
+
+            resume.addSection(type, listSection);
+        });
     }
 
     private void readOrganizationSection(DataInputStream dis, Resume resume, SectionType type) throws IOException {
@@ -162,6 +165,14 @@ public class DataStreamIOStrategy implements IOStrategy {
         dos.writeInt(collection.size());
         for (T item: collection) {
             dataWriter.write(item);
+        }
+    }
+
+    private void readWithExceptions(DataInputStream dis, DataReader dataReader) throws IOException {
+        int size = dis.readInt();
+
+        for (int i = 0; i < size; i++) {
+            dataReader.read();
         }
     }
 }
