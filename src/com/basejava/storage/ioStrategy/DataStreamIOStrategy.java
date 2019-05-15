@@ -14,30 +14,30 @@ public class DataStreamIOStrategy implements IOStrategy {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
 
-            Map<ContactType, Contact> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-
-            writeWithExceptions(contacts.entrySet(), item -> {
+            writeWithExceptions(resume.getContacts().entrySet(), dos, item -> {
                 dos.writeUTF(item.getKey().name());
                 dos.writeUTF(item.getValue().getTitle());
             });
 
-            writeWithExceptions(resume.getSections().entrySet(), item -> {
-                dos.writeUTF(item.getKey().name());
-                SectionType section = SectionType.valueOf(item.getKey().name());
+            writeWithExceptions(resume.getSections().entrySet(), dos, item -> {
+                String name = item.getKey().name();
+                SectionType type = SectionType.valueOf(name);
+                AbstractSection section = item.getValue();
 
-                switch (section) {
+                dos.writeUTF(name);
+
+                switch (type) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        dos.writeUTF(((TextSection) item.getValue()).getTitle());
+                        dos.writeUTF(((TextSection) section).getTitle());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        writeListSection(dos, ((ListSection) item.getValue()).getItems());
+                        writeListSection(dos, ((ListSection) section).getItems());
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        writeOrganizationSection(dos, ((OrganizationSection) item.getValue()).getItems());
+                        writeOrganizationSection(dos, ((OrganizationSection) section).getItems());
                         break;
                     default:
                         break;
@@ -60,24 +60,28 @@ public class DataStreamIOStrategy implements IOStrategy {
                 resume.addContact(contactType, dis.readUTF());
             }
 
-            while (dis.available() > 0) {
-                SectionType section = SectionType.valueOf(dis.readUTF());
+            int sectionsSize = dis.readInt();
 
-                switch (section) {
-                    case OBJECTIVE:
-                    case PERSONAL:
-                        resume.addSection(section, new TextSection(dis.readUTF()));
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        readListSection(dis, resume, section, dis.readInt());
-                        break;
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        readOrganizationSection(dis, resume, section);
-                        break;
-                    default:
-                        break;
+            if (sectionsSize > 0) {
+                while (dis.available() > 0) {
+                    SectionType section = SectionType.valueOf(dis.readUTF());
+
+                    switch (section) {
+                        case OBJECTIVE:
+                        case PERSONAL:
+                            resume.addSection(section, new TextSection(dis.readUTF()));
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            readListSection(dis, resume, section, dis.readInt());
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            readOrganizationSection(dis, resume, section);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -86,13 +90,10 @@ public class DataStreamIOStrategy implements IOStrategy {
     }
 
     private void writeOrganizationSection(DataOutputStream dos, List<OrganizationList> items) throws IOException {
-        dos.writeInt(items.size());
-
-        writeWithExceptions(items, item -> {
+        writeWithExceptions(items, dos, item -> {
             dos.writeUTF(item.getTitle());
-            dos.writeInt(item.getItems().size());
 
-            writeWithExceptions(item.getItems(), subitem -> {
+            writeWithExceptions(item.getItems(), dos, subitem -> {
                 dos.writeUTF(subitem.getTitle());
                 dos.writeUTF(subitem.getDescription());
                 dos.writeUTF(subitem.getPeriodFrom().toString());
@@ -102,8 +103,7 @@ public class DataStreamIOStrategy implements IOStrategy {
     }
 
     private void writeListSection(DataOutputStream dos, List<String> items) throws IOException {
-        dos.writeInt(items.size());
-        writeWithExceptions(items, dos::writeUTF);
+        writeWithExceptions(items, dos, dos::writeUTF);
     }
 
     private void readListSection(DataInputStream dis, Resume resume, SectionType type, int size) throws IOException {
@@ -146,7 +146,8 @@ public class DataStreamIOStrategy implements IOStrategy {
         resume.addSection(type, new OrganizationSection(organizationList));
     }
 
-    private <T> void writeWithExceptions(Collection<T> collection, DataWriter<T> dataWriter) throws IOException {
+    private <T> void writeWithExceptions(Collection<T> collection, DataOutputStream dos, DataWriter<T> dataWriter) throws IOException {
+        dos.writeInt(collection.size());
         for (T item: collection) {
             dataWriter.write(item);
         }
