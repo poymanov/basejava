@@ -104,29 +104,19 @@ public class DataStreamIOStrategy implements IOStrategy {
     }
 
     private void readListSection(DataInputStream dis, Resume resume, SectionType type) throws IOException {
+        ArrayList<String> data = new ArrayList<>();
+
         readWithExceptions(dis, () -> {
-            ListSection listSection = (ListSection) resume.getSections().get(type);
-
-            if (listSection == null) {
-                listSection = new ListSection(new ArrayList<String>() {{
-                    add(dis.readUTF());
-                }});
-            } else {
-                ArrayList<String> list = listSection.getItems();
-                list.add(dis.readUTF());
-                listSection = new ListSection(list);
-            }
-
-            resume.addSection(type, listSection);
+            data.add(dis.readUTF());
         });
+
+        resume.addSection(type, new ListSection(data));
     }
 
     private void readOrganizationSection(DataInputStream dis, Resume resume, SectionType type) throws IOException {
         ArrayList<Organization> organization = new ArrayList<>();
 
-        int allSize = dis.readInt();
-
-        for (int i = 0; i < allSize; i++) {
+        readWithExceptions(dis, () -> {
             String title = dis.readUTF();
             String url = dis.readUTF();
 
@@ -136,9 +126,7 @@ public class DataStreamIOStrategy implements IOStrategy {
 
             List<Position> positions = new ArrayList<>();
 
-            int itemsSize = dis.readInt();
-
-            for (int k = 0; k < itemsSize; k++) {
+            readWithExceptions(dis, () -> {
                 String itemTitle = dis.readUTF();
                 String description = dis.readUTF();
 
@@ -153,10 +141,10 @@ public class DataStreamIOStrategy implements IOStrategy {
                 LocalDate periodTo = periodToString.isEmpty() ? null : LocalDate.parse(periodToString);
 
                 positions.add(new Position(itemTitle, description, periodFrom, periodTo));
-            }
+            });
 
             organization.add(new Organization(title, url, positions));
-        }
+        });
 
         resume.addSection(type, new OrganizationSection(organization));
     }
