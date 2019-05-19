@@ -13,8 +13,11 @@ public class JavaStreamTest {
         System.out.println(oddOrEven(Arrays.asList(1, 2, 3, 1)));
     }
 
-    private static int minValue(int values[]) {
-        return Arrays.stream(values).distinct().sorted().reduce(0, (number1, number2) -> (number1 * 10) + number2);
+    private static int minValue(int[] values) {
+        return Arrays.stream(values)
+                .distinct()
+                .sorted()
+                .reduce(0, (number1, number2) -> (number1 * 10) + number2);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
@@ -24,14 +27,7 @@ public class JavaStreamTest {
         return integers.stream()
                 .filter(i -> {
                     boolean isNumberEven = i % 2 == 0;
-
-                    if (isSumEven && isNumberEven) {
-                        return false;
-                    } else if (!isSumEven && !isNumberEven) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return (!isSumEven || !isNumberEven) && (isSumEven || isNumberEven);
                 })
                 .collect(Collectors.toList());
     }
