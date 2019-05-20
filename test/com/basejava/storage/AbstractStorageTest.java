@@ -1,5 +1,6 @@
 package com.basejava.storage;
 
+import com.basejava.Config;
 import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.*;
@@ -14,7 +15,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertSame;
 
 public abstract class AbstractStorageTest {
-    protected static final String STORAGE_DIR = "./storage";
+    protected static final String STORAGE_DIR = Config.get().getStorageDir().getAbsolutePath();
     protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
@@ -33,45 +34,45 @@ public abstract class AbstractStorageTest {
         RESUME_2 = new Resume(UUID_2, "Test Name 2");
         RESUME_3 = new Resume(UUID_3, "Test Name 3");
 
-        RESUME_3.addContact(ContactType.PHONE, "+7(111) 111-1111");
-        RESUME_3.addContact(ContactType.EMAIL, "test@test.ru");
-        RESUME_3.addSection(SectionType.OBJECTIVE, new TextSection("Objective"));
-        RESUME_3.addSection(SectionType.PERSONAL, new TextSection("Personal"));
+//        RESUME_3.addContact(ContactType.PHONE, "+7(111) 111-1111");
+//        RESUME_3.addContact(ContactType.EMAIL, "test@test.ru");
+//        RESUME_3.addSection(SectionType.OBJECTIVE, new TextSection("Objective"));
+//        RESUME_3.addSection(SectionType.PERSONAL, new TextSection("Personal"));
 
-        ArrayList<String> achievementData = new ArrayList<>();
-        achievementData.add("Achievement 1");
-        achievementData.add("Achievement 2");
-
-        RESUME_3.addSection(SectionType.ACHIEVEMENT, new ListSection(achievementData));
-
-        ArrayList<String> qualificationsData = new ArrayList<>();
-        qualificationsData.add("Qualification 1");
-        qualificationsData.add("Qualification 2");
-
-        RESUME_3.addSection(SectionType.QUALIFICATIONS, new ListSection(qualificationsData));
-
-        Organization organization1 = new Organization("Title 1", "http://test.test", new ArrayList<Position>() {{
-            add(new Position("Title 1.1", LocalDate.of(2019, 10, 1), null));
-            add(new Position("Title 1.2", "Description 1.2",
-                    LocalDate.of(2019, 8, 1), LocalDate.of(2019, 9, 1)));
-        }});
-
-        ArrayList<Organization> experienceList = new ArrayList<>();
-        experienceList.add(organization1);
-
-        RESUME_3.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceList));
-
-        Organization organization2 = new Organization("Title 2", new ArrayList<Position>() {{
-            add(new Position("Title 2.1", "Description 2.1",
-                    LocalDate.of(2019, 8, 1), null));
-            add(new Position("Title 2.2",
-                    LocalDate.of(2019, 6, 1), LocalDate.of(2019, 7, 1)));
-        }});
-
-        ArrayList<Organization> educationList = new ArrayList<>();
-        educationList.add(organization2);
-
-        RESUME_3.addSection(SectionType.EDUCATION, new OrganizationSection(educationList));
+//        ArrayList<String> achievementData = new ArrayList<>();
+//        achievementData.add("Achievement 1");
+//        achievementData.add("Achievement 2");
+//
+//        RESUME_3.addSection(SectionType.ACHIEVEMENT, new ListSection(achievementData));
+//
+//        ArrayList<String> qualificationsData = new ArrayList<>();
+//        qualificationsData.add("Qualification 1");
+//        qualificationsData.add("Qualification 2");
+//
+//        RESUME_3.addSection(SectionType.QUALIFICATIONS, new ListSection(qualificationsData));
+//
+//        Organization organization1 = new Organization("Title 1", "http://test.test", new ArrayList<Position>() {{
+//            add(new Position("Title 1.1", LocalDate.of(2019, 10, 1), null));
+//            add(new Position("Title 1.2", "Description 1.2",
+//                    LocalDate.of(2019, 8, 1), LocalDate.of(2019, 9, 1)));
+//        }});
+//
+//        ArrayList<Organization> experienceList = new ArrayList<>();
+//        experienceList.add(organization1);
+//
+//        RESUME_3.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceList));
+//
+//        Organization organization2 = new Organization("Title 2", new ArrayList<Position>() {{
+//            add(new Position("Title 2.1", "Description 2.1",
+//                    LocalDate.of(2019, 8, 1), null));
+//            add(new Position("Title 2.2",
+//                    LocalDate.of(2019, 6, 1), LocalDate.of(2019, 7, 1)));
+//        }});
+//
+//        ArrayList<Organization> educationList = new ArrayList<>();
+//        educationList.add(organization2);
+//
+//        RESUME_3.addSection(SectionType.EDUCATION, new OrganizationSection(educationList));
 
         RESUME_4 = new Resume(UUID_4, "Test Name 4");
     }
@@ -125,8 +126,8 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void get() {
-        //assertEquals(RESUME_1, storage.get(UUID_1));
-        //assertEquals(RESUME_2, storage.get(UUID_2));
+        assertEquals(RESUME_1, storage.get(UUID_1));
+        assertEquals(RESUME_2, storage.get(UUID_2));
         assertEquals(RESUME_3, storage.get(UUID_3));
     }
 

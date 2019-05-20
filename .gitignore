@@ -3,5 +3,5 @@ out
 *.iml
 log
 storage/*
-
+config/resumes.properties
 
