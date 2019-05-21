@@ -1,63 +1,37 @@
 package com.basejava.sql;
 
+import com.basejava.exceptions.ExistedStorageException;
+import com.basejava.exceptions.NotExistedStorageException;
+import com.basejava.exceptions.StorageException;
+
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 public class SqlHelper {
-    public static void update(ConnectionFactory connectionFactory, String sql, List<String> params) throws SQLException {
-        try (PreparedStatement ps = getPrepareStatement(connectionFactory, sql)) {
-            setParams(ps, params);
+    private final ConnectionFactory connectionFactory;
 
-            if (ps.executeUpdate() == 0) {
-                throw new SQLException("Not executed");
-            }
+    public SqlHelper(String dbUrl, String dbUser, String dbPassword) {
+        connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+    }
+
+    public void execute(SqlExecute sqlCommands){
+        try (Connection connection = connectionFactory.getConnection()) {
+            sqlCommands.execute(connection);
+        } catch (NotExistedStorageException e) {
+            throw new NotExistedStorageException(e.getMessage());
+        } catch (ExistedStorageException e) {
+            throw new ExistedStorageException(e.getMessage());
+        } catch (SQLException e) {
+            throw new StorageException(e);
         }
     }
 
-    public static void deleteAll(ConnectionFactory connectionFactory, String table) throws SQLException {
-        String sql = "DELETE FROM " + table;
-        try (PreparedStatement ps = getConnection(connectionFactory).prepareStatement(sql)) {
-            ps.execute();
-        }
-    }
-
-    public static void insert(ConnectionFactory connectionFactory, String sql, List<String> params) throws SQLException {
-        try (PreparedStatement ps = getPrepareStatement(connectionFactory, sql)) {
-            setParams(ps, params);
-            ps.execute();
-        }
-    }
-
-    public static ResultSet select(ConnectionFactory connectionFactory, String sql, List<String> params) throws SQLException {
-        PreparedStatement ps = getPrepareStatement(connectionFactory, sql);
-        setParams(ps, params);
-        return ps.executeQuery();
-    }
-
-    public static void delete(ConnectionFactory connectionFactory, String sql, List<String> params) throws SQLException {
-        try (PreparedStatement ps = getPrepareStatement(connectionFactory, sql)) {
-            setParams(ps, params);
-            if (!ps.execute()) {
-                throw new SQLException("Not executed");
-            }
-            ;
-        }
-    }
-
-    private static Connection getConnection(ConnectionFactory connectionFactory) throws SQLException {
-        return connectionFactory.getConnection();
-    }
-
-    private static PreparedStatement getPrepareStatement(ConnectionFactory connectionFactory, String sql) throws SQLException {
-        return getConnection(connectionFactory).prepareStatement(sql);
-    }
-
-    private static void setParams(PreparedStatement ps, List<String> params) throws SQLException {
-        for (int i = 0; i < params.size(); i++) {
-            ps.setString(i + 1, params.get(i));
+    public <V> V select(SqlSelect<V> sqlSelect) {
+        try (Connection connection = connectionFactory.getConnection()) {
+            return sqlSelect.select(connection);
+        } catch (SQLException e) {
+            throw new StorageException(e);
         }
     }
 }
