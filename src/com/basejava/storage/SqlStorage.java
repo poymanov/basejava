@@ -7,7 +7,9 @@ import com.basejava.sql.SqlHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -18,8 +20,8 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.execute((conn) -> {
-            PreparedStatement ps = conn.prepareStatement("UPDATE resumes SET full_name = ? WHERE uuid = ?");
+        String sql = "UPDATE resumes SET full_name = ? WHERE uuid = ?";
+        sqlHelper.execute(sql, (ps) -> {
             ps.setString(1, resume.getFullName());
             ps.setString(2, resume.getUuid());
 
@@ -33,8 +35,24 @@ public class SqlStorage implements Storage {
 
     @Override
     public void clear() {
-        sqlHelper.execute((conn) -> {
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM resumes");
+        String sql = "DELETE FROM resumes";
+        sqlHelper.execute(sql, (ps) -> {
+            ps.execute();
+            return null;
+        });
+    }
+
+    @Override
+    public void save(Resume resume) {
+        String sql = "INSERT INTO resumes (uuid, full_name) VALUES (?, ?)";
+
+        sqlHelper.setParams(new HashMap<String, String>() {{
+            put("uuid", resume.getUuid());
+        }});
+
+        sqlHelper.execute(sql, (ps) -> {
+            ps.setString(1, resume.getUuid());
+            ps.setString(2, resume.getFullName());
             ps.execute();
 
             return null;
@@ -42,28 +60,9 @@ public class SqlStorage implements Storage {
     }
 
     @Override
-    public void save(Resume resume) {
-        sqlHelper.execute((conn) -> {
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO resumes (uuid, full_name) VALUES (?, ?)");
-            ps.setString(1, resume.getUuid());
-            ps.setString(2, resume.getFullName());
-
-            try {
-                return ps.execute();
-            } catch (SQLException e) {
-                if (e.getSQLState().equals("23505")) {
-                    throw new ExistedStorageException(resume.getUuid());
-                } else {
-                    throw new SQLException(e);
-                }
-            }
-        });
-    }
-
-    @Override
     public Resume get(String uuid) {
-        return sqlHelper.execute((conn) -> {
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM resumes WHERE uuid = ?");
+        String sql = "SELECT * FROM resumes WHERE uuid = ?";
+        return sqlHelper.execute(sql, (ps) -> {
             ps.setString(1, uuid);
             ps.executeQuery();
 
@@ -79,8 +78,8 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.execute((conn) -> {
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM resumes WHERE uuid = ?");
+        String sql = "DELETE FROM resumes WHERE uuid = ?";
+        sqlHelper.execute(sql, (ps) -> {
             ps.setString(1, uuid);
 
             if (!ps.execute()) {
@@ -93,8 +92,8 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute((conn) -> {
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM resumes ORDER BY uuid");
+        String sql = "SELECT * FROM resumes ORDER BY uuid";
+        return sqlHelper.execute(sql, (ps) -> {
             ps.executeQuery();
 
             ResultSet rs = ps.executeQuery();
