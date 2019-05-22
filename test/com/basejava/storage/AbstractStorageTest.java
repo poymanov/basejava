@@ -34,8 +34,8 @@ public abstract class AbstractStorageTest {
         RESUME_2 = new Resume(UUID_2, "Test Name 2");
         RESUME_3 = new Resume(UUID_3, "Test Name 3");
 
-//        RESUME_3.addContact(ContactType.PHONE, "+7(111) 111-1111");
-//        RESUME_3.addContact(ContactType.EMAIL, "test@test.ru");
+        RESUME_3.addContact(ContactType.PHONE, "+7(111) 111-1111");
+        RESUME_3.addContact(ContactType.EMAIL, "test@test.ru");
 //        RESUME_3.addSection(SectionType.OBJECTIVE, new TextSection("Objective"));
 //        RESUME_3.addSection(SectionType.PERSONAL, new TextSection("Personal"));
 

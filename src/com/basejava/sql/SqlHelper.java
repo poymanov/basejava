@@ -2,6 +2,7 @@ package com.basejava.sql;
 
 import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.StorageException;
+import com.basejava.storage.Storage;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,12 +23,30 @@ public class SqlHelper {
              PreparedStatement ps = connection.prepareStatement(sql)) {
             return sqlCommands.execute(ps);
         } catch (SQLException e) {
-            if (e.getSQLState().equals("23505")) {
-                throw new ExistedStorageException(params.get("uuid"));
-            } else {
-                throw new StorageException(e);
-            }
+            throw getException(e);
+        }
+    }
 
+    public <V> V transactionalExecute(SqlTransaction<V> sqlCommands){
+        try (Connection conn = connectionFactory.getConnection()){
+            try {
+                conn.setAutoCommit(false);
+                V res = sqlCommands.execute(conn);
+                conn.commit();
+                return res;
+            } catch (SQLException e) {
+                throw getException(e);
+            }
+        } catch (SQLException e) {
+            throw getException(e);
+        }
+    }
+
+    private StorageException getException(SQLException e) {
+        if (e.getSQLState().equals("23505")) {
+            return new ExistedStorageException(params.get("uuid"));
+        } else {
+            return new StorageException(e);
         }
     }
 

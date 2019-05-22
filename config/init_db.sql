@@ -6,3 +6,15 @@ create table resumes
     full_name text not null
 );
 
+create table if not exists contacts
+(
+    resume_uuid text not null
+        constraint fk_contacts_resume_uuid
+            references resumes
+            on update cascade on delete cascade,
+    type text not null,
+    value text not null
+);
+
+create unique index if not exists contacts_resume_uuid_type_uindex
+    on contacts (resume_uuid, type);

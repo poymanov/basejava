@@ -2,14 +2,13 @@ package com.basejava.storage;
 
 import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
+import com.basejava.model.Contact;
+import com.basejava.model.ContactType;
 import com.basejava.model.Resume;
 import com.basejava.sql.SqlHelper;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -44,35 +43,47 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        String sql = "INSERT INTO resumes (uuid, full_name) VALUES (?, ?)";
-
         sqlHelper.setParams(new HashMap<String, String>() {{
             put("uuid", resume.getUuid());
         }});
 
-        sqlHelper.execute(sql, (ps) -> {
-            ps.setString(1, resume.getUuid());
-            ps.setString(2, resume.getFullName());
-            ps.execute();
+        sqlHelper.transactionalExecute((conn -> {
+            try (PreparedStatement ps = conn.prepareStatement("INSERT INTO resumes (uuid, full_name) VALUES (?, ?)")) {
+                ps.setString(1, resume.getUuid());
+                ps.setString(2, resume.getFullName());
+                ps.execute();
+            }
+
+            if (resume.getContacts().size() > 0) {
+                try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contacts (resume_uuid, type, value) VALUES (?, ?, ?)")) {
+                    for (Map.Entry<ContactType, Contact> entry: resume.getContacts().entrySet()) {
+                        ps.setString(1, resume.getUuid());
+                        ps.setString(2, entry.getKey().name());
+                        ps.setString(3, entry.getValue().getTitle());
+                        ps.addBatch();
+                    }
+
+                    ps.executeBatch();
+                }
+            }
 
             return null;
-        });
+        }));
     }
 
     @Override
     public Resume get(String uuid) {
-        String sql = "SELECT * FROM resumes WHERE uuid = ?";
+        String sql = "SELECT * FROM resumes r LEFT JOIN contacts c ON r.uuid = c.resume_uuid WHERE uuid = ?";
         return sqlHelper.execute(sql, (ps) -> {
             ps.setString(1, uuid);
-            ps.executeQuery();
 
-            ResultSet rs = ps.executeQuery();
+            List<Resume> resumes = getResumes(ps.executeQuery());
 
-            if (!rs.next()) {
+            if (resumes.size() > 0) {
+                return resumes.get(0);
+            } else {
                 throw new NotExistedStorageException(uuid);
             }
-
-            return new Resume(uuid, rs.getString("full_name"));
         });
     }
 
@@ -92,19 +103,36 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        String sql = "SELECT * FROM resumes ORDER BY uuid";
-        return sqlHelper.execute(sql, (ps) -> {
-            ps.executeQuery();
+        String sql = "SELECT * FROM resumes r LEFT JOIN contacts c ON r.uuid = c.resume_uuid ORDER BY uuid";
+        return sqlHelper.execute(sql, (ps) -> getResumes(ps.executeQuery()));
+    }
 
-            ResultSet rs = ps.executeQuery();
+    private List<Resume> getResumes(ResultSet rs) throws SQLException {
+        Map<String, Resume> resumesData = new TreeMap<>();
 
-            List<Resume> resumes = new ArrayList<>();
+        while (rs.next()) {
+            String uuid = rs.getString("uuid");
+            String fullName = rs.getString("full_name");
+            String type = rs.getString("type");
+            String value = rs.getString("value");
 
-            while (rs.next()) {
-                resumes.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
+            Resume resume;
+
+            if (resumesData.containsKey(uuid)) {
+                resume = resumesData.get(uuid);
+            } else {
+                resume = new Resume(uuid, fullName);
+                resumesData.put(uuid, resume);
             }
 
-            return resumes;
-        });
+            if (type == null || value == null) {
+                continue;
+            }
+
+            ContactType contactType = ContactType.valueOf(type);
+            resume.addContact(contactType, value);
+        }
+
+        return Arrays.asList(resumesData.values().toArray(new Resume[0]));
     }
 }
