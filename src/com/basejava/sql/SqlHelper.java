@@ -1,7 +1,5 @@
 package com.basejava.sql;
 
-import com.basejava.exceptions.ExistedStorageException;
-import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.exceptions.StorageException;
 
 import java.sql.Connection;
@@ -15,21 +13,9 @@ public class SqlHelper {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
 
-    public void execute(SqlExecute sqlCommands){
+    public <V> V execute(SqlExecute<V> sqlCommands){
         try (Connection connection = connectionFactory.getConnection()) {
-            sqlCommands.execute(connection);
-        } catch (NotExistedStorageException e) {
-            throw new NotExistedStorageException(e.getMessage());
-        } catch (ExistedStorageException e) {
-            throw new ExistedStorageException(e.getMessage());
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
-    }
-
-    public <V> V select(SqlSelect<V> sqlSelect) {
-        try (Connection connection = connectionFactory.getConnection()) {
-            return sqlSelect.select(connection);
+            return sqlCommands.execute(connection);
         } catch (SQLException e) {
             throw new StorageException(e);
         }

@@ -26,6 +26,8 @@ public class SqlStorage implements Storage {
             if (ps.executeUpdate() == 0) {
                 throw new NotExistedStorageException(resume.getUuid());
             }
+
+            return null;
         });
     }
 
@@ -34,6 +36,8 @@ public class SqlStorage implements Storage {
         sqlHelper.execute((conn) -> {
             PreparedStatement ps = conn.prepareStatement("DELETE FROM resumes");
             ps.execute();
+
+            return null;
         });
     }
 
@@ -45,16 +49,20 @@ public class SqlStorage implements Storage {
             ps.setString(2, resume.getFullName());
 
             try {
-                ps.execute();
+                return ps.execute();
             } catch (SQLException e) {
-                throw new ExistedStorageException(resume.getUuid());
+                if (e.getSQLState().equals("23505")) {
+                    throw new ExistedStorageException(resume.getUuid());
+                } else {
+                    throw new SQLException(e);
+                }
             }
         });
     }
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.select((conn) -> {
+        return sqlHelper.execute((conn) -> {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM resumes WHERE uuid = ?");
             ps.setString(1, uuid);
             ps.executeQuery();
@@ -78,12 +86,14 @@ public class SqlStorage implements Storage {
             if (!ps.execute()) {
                 throw new NotExistedStorageException(uuid);
             }
+
+            return null;
         });
     }
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.select((conn) -> {
+        return sqlHelper.execute((conn) -> {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM resumes ORDER BY uuid");
             ps.executeQuery();
 
