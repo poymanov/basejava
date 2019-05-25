@@ -12,37 +12,36 @@ import java.util.Map;
 
 public class SqlHelper {
     private final ConnectionFactory connectionFactory;
-    private Map<String, String> params;
 
     public SqlHelper(String dbUrl, String dbUser, String dbPassword) {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
 
-    public <V> V execute(String sql, SqlExecute<V> sqlCommands){
+    public <V> V execute(String sql, SqlExecute<V> sqlCommands, Map params) {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             return sqlCommands.execute(ps);
         } catch (SQLException e) {
-            throw getException(e);
+            throw getException(e, params);
         }
     }
 
-    public <V> V transactionalExecute(SqlTransaction<V> sqlCommands){
-        try (Connection conn = connectionFactory.getConnection()){
+    public <V> V transactionalExecute(SqlTransaction<V> sqlCommands, Map params) {
+        try (Connection conn = connectionFactory.getConnection()) {
             try {
                 conn.setAutoCommit(false);
                 V res = sqlCommands.execute(conn);
                 conn.commit();
                 return res;
             } catch (SQLException e) {
-                throw getException(e);
+                throw getException(e, params);
             }
         } catch (SQLException e) {
-            throw getException(e);
+            throw getException(e, params);
         }
     }
 
-    private StorageException getException(SQLException e) {
+    private StorageException getException(SQLException e, Map<String, String> params) {
         if (e.getSQLState().equals("23505")) {
             return new ExistedStorageException(params.get("uuid"));
         } else {
@@ -50,7 +49,4 @@ public class SqlHelper {
         }
     }
 
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
 }
