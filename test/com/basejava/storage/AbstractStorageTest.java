@@ -4,6 +4,7 @@ import com.basejava.Config;
 import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.*;
+import com.sun.org.apache.regexp.internal.RE;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,6 +100,13 @@ public abstract class AbstractStorageTest {
         Resume uuid4 = new Resume(UUID_1, "Test Name");
         storage.update(uuid4);
         assertEquals(uuid4, storage.get(UUID_1));
+    }
+
+    @Test
+    public void updateContacts() {
+        RESUME_3.addContact(ContactType.PHONE, "+7(222) 222-2222");
+        RESUME_3.addContact(ContactType.EMAIL, "test2@test.ru");
+        storage.update(RESUME_3);
     }
 
     @Test

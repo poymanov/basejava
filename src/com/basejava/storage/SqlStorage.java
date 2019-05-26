@@ -20,7 +20,8 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume resume) {
         sqlHelper.transactionalExecute(conn -> {
-            addResume(conn, resume, false);
+            updateResume(conn, resume);
+            addContacts(conn, resume);
             return null;
         }, null);
     }
@@ -37,11 +38,10 @@ public class SqlStorage implements Storage {
     @Override
     public void save(Resume resume) {
         sqlHelper.transactionalExecute(conn -> {
-            addResume(conn, resume, true);
+            insertResume(conn, resume);
+            addContacts(conn, resume);
             return null;
-        }, new HashMap<String, String>() {{
-            put("uuid", resume.getUuid());
-        }});
+        }, resume.getUuid());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class SqlStorage implements Storage {
     }
 
     private List<Resume> getResumes(ResultSet rs) throws SQLException {
-        List<Resume> resumes = new ArrayList<>();
+        Map<String, Resume> resumesData = new LinkedHashMap<>();
 
         while (rs.next()) {
             String uuid = rs.getString("uuid");
@@ -89,45 +89,31 @@ public class SqlStorage implements Storage {
             String type = rs.getString("type");
             String value = rs.getString("value");
 
-            Optional resumeOptional = resumes.stream().filter(o -> o.getUuid().equals(uuid)).findFirst();
-
-            Resume resume;
-
-            if (resumeOptional.isPresent()) {
-                resume = (Resume) resumeOptional.get();
-            } else {
-                resume = new Resume(uuid, fullName);
-                resumes.add(resume);
-            }
+            resumesData.computeIfAbsent(uuid, key -> new Resume(uuid, fullName));
 
             if (type == null || value == null) {
                 continue;
             }
 
+            Resume resume = resumesData.get(uuid);
+
             ContactType contactType = ContactType.valueOf(type);
             resume.addContact(contactType, value);
         }
 
-        return resumes;
+        return new ArrayList<>(resumesData.values());
     }
 
-    private void addResume(Connection conn, Resume resume, boolean isNew) throws SQLException {
-        String contactsSql;
-
-        if (isNew) {
-            insertResume(conn, resume);
-            contactsSql = "INSERT INTO contacts (resume_uuid, type, value) VALUES (?, ?, ?)";
-        } else {
-            updateResume(conn, resume);
-            contactsSql = "UPDATE contacts SET type = ?, value = ? WHERE resume_uuid = ?";
-        }
+    private void addContacts(Connection conn, Resume resume) throws SQLException {
+        String sql = "INSERT INTO contacts (resume_uuid, type, value) VALUES (?, ?, ?)" +
+                "ON CONFLICT (resume_uuid, type) DO UPDATE SET value = excluded.value";
 
         if (resume.getContacts().size() > 0) {
-            try (PreparedStatement ps = conn.prepareStatement(contactsSql)) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 for (Map.Entry<ContactType, Contact> entry : resume.getContacts().entrySet()) {
-                    ps.setString(1, isNew ? resume.getUuid() : entry.getKey().name());
-                    ps.setString(2, isNew ? entry.getKey().name() : entry.getValue().getTitle());
-                    ps.setString(3, isNew ? entry.getValue().getTitle() : resume.getUuid());
+                    ps.setString(1, resume.getUuid());
+                    ps.setString(2, entry.getKey().name());
+                    ps.setString(3, entry.getValue().getTitle());
                     ps.addBatch();
                 }
 
