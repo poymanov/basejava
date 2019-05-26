@@ -12,8 +12,7 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertSame;
+import static junit.framework.TestCase.*;
 
 public abstract class AbstractStorageTest {
     protected static final String STORAGE_DIR = Config.get().getStorageDir().getAbsolutePath();
@@ -104,9 +103,32 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void updateContacts() {
-        RESUME_3.addContact(ContactType.PHONE, "+7(222) 222-2222");
-        RESUME_3.addContact(ContactType.EMAIL, "test2@test.ru");
-        storage.update(RESUME_3);
+        Resume resume = RESUME_3;
+
+        resume.addContact(ContactType.PHONE, "+7(222) 222-2222");
+        resume.addContact(ContactType.EMAIL, "test2@test.ru");
+        storage.update(resume);
+
+        resume = storage.get(UUID_3);
+
+        assertEquals("+7(222) 222-2222", resume.getContacts().get(ContactType.PHONE).getTitle());
+        assertEquals("test2@test.ru", resume.getContacts().get(ContactType.EMAIL).getTitle());
+
+        resume.getContacts().remove(ContactType.PHONE);
+        storage.update(resume);
+
+        resume = storage.get(UUID_3);
+
+        assertEquals(1, resume.getContacts().size());
+        assertNull(resume.getContacts().get(ContactType.PHONE));
+
+        resume.getContacts().clear();
+        storage.update(resume);
+
+        resume = storage.get(UUID_3);
+
+        assertEquals(0, resume.getContacts().size());
+        assertNull(resume.getContacts().get(ContactType.EMAIL));
     }
 
     @Test

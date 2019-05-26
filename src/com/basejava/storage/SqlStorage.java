@@ -1,6 +1,5 @@
 package com.basejava.storage;
 
-import com.basejava.exceptions.ExistedStorageException;
 import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.Contact;
 import com.basejava.model.ContactType;
@@ -105,11 +104,13 @@ public class SqlStorage implements Storage {
     }
 
     private void addContacts(Connection conn, Resume resume) throws SQLException {
-        String sql = "INSERT INTO contacts (resume_uuid, type, value) VALUES (?, ?, ?)" +
-                "ON CONFLICT (resume_uuid, type) DO UPDATE SET value = excluded.value";
+        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM contacts WHERE resume_uuid = ?")) {
+            ps.setString(1, resume.getUuid());
+            ps.execute();
+        }
 
         if (resume.getContacts().size() > 0) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contacts (resume_uuid, type, value) VALUES (?, ?, ?)")) {
                 for (Map.Entry<ContactType, Contact> entry : resume.getContacts().entrySet()) {
                     ps.setString(1, resume.getUuid());
                     ps.setString(2, entry.getKey().name());
