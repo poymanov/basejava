@@ -76,32 +76,39 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        String sql = "SELECT * FROM resumes r LEFT JOIN contacts c ON r.uuid = c.resume_uuid ORDER BY uuid";
+        String sql = "SELECT * FROM resumes ORDER BY uuid";
         return sqlHelper.execute(sql, (ps) -> getResumes(ps.executeQuery()), null);
     }
 
     private List<Resume> getResumes(ResultSet rs) throws SQLException {
-        Map<String, Resume> resumesData = new LinkedHashMap<>();
+        List<Resume> resumes = new ArrayList<>();
 
         while (rs.next()) {
             String uuid = rs.getString("uuid");
             String fullName = rs.getString("full_name");
-            String type = rs.getString("type");
-            String value = rs.getString("value");
 
-            resumesData.computeIfAbsent(uuid, key -> new Resume(uuid, fullName));
+            Resume resume = new Resume(uuid, fullName);
 
-            if (type == null || value == null) {
-                continue;
-            }
+            Map<ContactType, Contact> contacts = sqlHelper.execute("SELECT type, value FROM contacts WHERE resume_uuid = ?", psc -> {
+                Map<ContactType, Contact> contactsData = new EnumMap<>(ContactType.class);
+                psc.setString(1, uuid);
 
-            Resume resume = resumesData.get(uuid);
+                ResultSet rsc = psc.executeQuery();
 
-            ContactType contactType = ContactType.valueOf(type);
-            resume.addContact(contactType, value);
+                while (rsc.next()) {
+                    ContactType type = ContactType.valueOf(rsc.getString("type"));
+                    Contact contact = new Contact(rsc.getString("value"));
+                    contactsData.put(type, contact);
+                }
+
+                return contactsData;
+            }, null);
+
+            resume.setContacts(contacts);
+            resumes.add(resume);
         }
 
-        return new ArrayList<>(resumesData.values());
+        return resumes;
     }
 
     private void addContacts(Connection conn, Resume resume) throws SQLException {
