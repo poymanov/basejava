@@ -24,33 +24,35 @@ public abstract class AbstractStorageTest {
     private static final String UUID_4 = "uuid4";
     private static final String UUID_DUMMY = "dummy";
 
-    private static final Resume RESUME_1;
-    private static final Resume RESUME_2;
-    private static final Resume RESUME_3;
-    private static final Resume RESUME_4;
+    private static Resume RESUME_1;
+    private static Resume RESUME_2;
+    private static Resume RESUME_3;
+    private static Resume RESUME_4;
 
-    static {
+    protected AbstractStorageTest(Storage storage) {
+        this.storage = storage;
+
         RESUME_1 = new Resume(UUID_1, "Test Name");
         RESUME_2 = new Resume(UUID_2, "Test Name 2");
         RESUME_3 = new Resume(UUID_3, "Test Name 3");
 
         RESUME_3.addContact(ContactType.PHONE, "+7(111) 111-1111");
         RESUME_3.addContact(ContactType.EMAIL, "test@test.ru");
-//        RESUME_3.addSection(SectionType.OBJECTIVE, new TextSection("Objective"));
-//        RESUME_3.addSection(SectionType.PERSONAL, new TextSection("Personal"));
+        RESUME_3.addSection(SectionType.OBJECTIVE, new TextSection("Objective"));
+        RESUME_3.addSection(SectionType.PERSONAL, new TextSection("Personal"));
 
-//        ArrayList<String> achievementData = new ArrayList<>();
-//        achievementData.add("Achievement 1");
-//        achievementData.add("Achievement 2");
-//
-//        RESUME_3.addSection(SectionType.ACHIEVEMENT, new ListSection(achievementData));
-//
-//        ArrayList<String> qualificationsData = new ArrayList<>();
-//        qualificationsData.add("Qualification 1");
-//        qualificationsData.add("Qualification 2");
-//
-//        RESUME_3.addSection(SectionType.QUALIFICATIONS, new ListSection(qualificationsData));
-//
+        ArrayList<String> achievementData = new ArrayList<>();
+        achievementData.add("Achievement 1");
+        achievementData.add("Achievement 2");
+
+        RESUME_3.addSection(SectionType.ACHIEVEMENT, new ListSection(achievementData));
+
+        ArrayList<String> qualificationsData = new ArrayList<>();
+        qualificationsData.add("Qualification 1");
+        qualificationsData.add("Qualification 2");
+
+        RESUME_3.addSection(SectionType.QUALIFICATIONS, new ListSection(qualificationsData));
+
 //        Organization organization1 = new Organization("Title 1", "http://test.test", new ArrayList<Position>() {{
 //            add(new Position("Title 1.1", LocalDate.of(2019, 10, 1), null));
 //            add(new Position("Title 1.2", "Description 1.2",
@@ -75,10 +77,6 @@ public abstract class AbstractStorageTest {
 //        RESUME_3.addSection(SectionType.EDUCATION, new OrganizationSection(educationList));
 
         RESUME_4 = new Resume(UUID_4, "Test Name 4");
-    }
-
-    protected AbstractStorageTest(Storage storage) {
-        this.storage = storage;
     }
 
     @Before
@@ -129,6 +127,43 @@ public abstract class AbstractStorageTest {
 
         assertEquals(0, resume.getContacts().size());
         assertNull(resume.getContacts().get(ContactType.EMAIL));
+    }
+
+    @Test
+    public void updateSections() {
+        Resume resume = RESUME_3;
+
+        resume.addSection(SectionType.OBJECTIVE, new TextSection("Objective 2"));
+
+        ArrayList<String> achievementData = new ArrayList<>();
+        achievementData.add("Achievement 11");
+        achievementData.add("Achievement 22");
+
+        resume.addSection(SectionType.ACHIEVEMENT, new ListSection(achievementData));
+
+        storage.update(resume);
+
+        resume = storage.get(UUID_3);
+
+        assertEquals("Objective 2", ((TextSection) resume.getSections().get(SectionType.OBJECTIVE)).getTitle());
+        assertEquals("Achievement 11", ((ListSection) resume.getSections().get(SectionType.ACHIEVEMENT)).getItems().get(0));
+        assertEquals("Achievement 22", ((ListSection) resume.getSections().get(SectionType.ACHIEVEMENT)).getItems().get(1));
+
+        resume.getSections().remove(SectionType.ACHIEVEMENT);
+        storage.update(resume);
+
+        resume = storage.get(UUID_3);
+
+        assertEquals(3, resume.getSections().size());
+        assertNull(resume.getSections().get(SectionType.ACHIEVEMENT));
+
+        resume.getSections().clear();
+        storage.update(resume);
+
+        resume = storage.get(UUID_3);
+
+        assertEquals(0, resume.getSections().size());
+        assertNull(resume.getSections().get(SectionType.OBJECTIVE));
     }
 
     @Test
