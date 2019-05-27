@@ -20,6 +20,7 @@ public class SqlStorage implements Storage {
     public void update(Resume resume) {
         sqlHelper.transactionalExecute(conn -> {
             updateResume(conn, resume);
+            removeContacts(conn, resume);
             addContacts(conn, resume);
             return null;
         }, null);
@@ -104,11 +105,6 @@ public class SqlStorage implements Storage {
     }
 
     private void addContacts(Connection conn, Resume resume) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM contacts WHERE resume_uuid = ?")) {
-            ps.setString(1, resume.getUuid());
-            ps.execute();
-        }
-
         if (resume.getContacts().size() > 0) {
             try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contacts (resume_uuid, type, value) VALUES (?, ?, ?)")) {
                 for (Map.Entry<ContactType, Contact> entry : resume.getContacts().entrySet()) {
@@ -120,6 +116,13 @@ public class SqlStorage implements Storage {
 
                 ps.executeBatch();
             }
+        }
+    }
+
+    private void removeContacts(Connection conn, Resume resume) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM contacts WHERE resume_uuid = ?")) {
+            ps.setString(1, resume.getUuid());
+            ps.execute();
         }
     }
 
