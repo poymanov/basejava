@@ -47,17 +47,44 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        String sql = "SELECT * FROM resumes r LEFT JOIN contacts c ON r.uuid = c.resume_uuid WHERE uuid = ?";
-        return sqlHelper.execute(sql, (ps) -> {
-            ps.setString(1, uuid);
+        return sqlHelper.transactionalExecute(conn -> {
+            Resume resume;
 
-            List<Resume> resumes = getResumes(ps.executeQuery());
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resumes WHERE uuid = ?")) {
+                ps.setString(1, uuid);
 
-            if (resumes.size() > 0) {
-                return resumes.get(0);
-            } else {
-                throw new NotExistedStorageException(uuid);
+                ResultSet rs = ps.executeQuery();
+
+                if (!rs.next()) {
+                    throw new NotExistedStorageException(uuid);
+                }
+
+                resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
             }
+
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM contacts WHERE resume_uuid = ?")) {
+                ps.setString(1, uuid);
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    String type = rs.getString("type");
+                    String value = rs.getString("value");
+                    resume.addContact(ContactType.valueOf(type), value);
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM sections WHERE resume_uuid = ?")) {
+                ps.setString(1, uuid);
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    SectionType type = SectionType.valueOf(rs.getString("type"));
+                    String value = rs.getString("value");
+                    resume.addSection(type, getSectionByType(type, value));
+                }
+            }
+
+            return resume;
         }, null);
     }
 
@@ -77,72 +104,61 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        String sql = "SELECT * FROM resumes ORDER BY uuid";
-        return sqlHelper.execute(sql, (ps) -> getResumes(ps.executeQuery()), null);
+        return sqlHelper.transactionalExecute(conn -> {
+            Map<String, Resume> resumes = new LinkedHashMap<>();
+
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resumes ORDER BY uuid")) {
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    String uuid = rs.getString("uuid");
+                    String fullName = rs.getString("full_name");
+                    Resume resume = new Resume(uuid, fullName);
+                    resumes.put(uuid, resume);
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM contacts")) {
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    String resumeUuid = rs.getString("resume_uuid");
+
+                    if (!resumes.containsKey(resumeUuid)) {
+                        continue;
+                    }
+
+                    String type = rs.getString("type");
+                    String value = rs.getString("value");
+
+                    Resume resume = resumes.get(resumeUuid);
+                    resume.addContact(ContactType.valueOf(type), value);
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM sections")) {
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    String resumeUuid = rs.getString("resume_uuid");
+
+                    if (!resumes.containsKey(resumeUuid)) {
+                        continue;
+                    }
+
+                    SectionType type = SectionType.valueOf(rs.getString("type"));
+                    String value = rs.getString("value");
+                    Resume resume = resumes.get(resumeUuid);
+                    resume.addSection(type, getSectionByType(type, value));
+                }
+            }
+
+            return new ArrayList<>(resumes.values());
+        }, null);
     }
 
     private List<Resume> getResumes(ResultSet rs) throws SQLException {
-        List<Resume> resumes = new ArrayList<>();
-
-        while (rs.next()) {
-            String uuid = rs.getString("uuid");
-            String fullName = rs.getString("full_name");
-
-            Resume resume = new Resume(uuid, fullName);
-
-            Map<ContactType, Contact> contacts = sqlHelper.execute("SELECT type, value FROM contacts WHERE resume_uuid = ?", psc -> {
-                Map<ContactType, Contact> contactsData = new EnumMap<>(ContactType.class);
-                psc.setString(1, uuid);
-
-                ResultSet rsc = psc.executeQuery();
-
-                while (rsc.next()) {
-                    ContactType type = ContactType.valueOf(rsc.getString("type"));
-                    Contact contact = new Contact(rsc.getString("value"));
-                    contactsData.put(type, contact);
-                }
-
-                return contactsData;
-            }, null);
-
-            Map<SectionType, AbstractSection> sections = sqlHelper.execute("SELECT type, value FROM sections WHERE resume_uuid = ?", pss -> {
-                Map<SectionType, AbstractSection> sectionsData = new EnumMap<>(SectionType.class);
-                pss.setString(1, uuid);
-
-                ResultSet rss = pss.executeQuery();
-
-                while (rss.next()) {
-                    SectionType type = SectionType.valueOf(rss.getString("type"));
-
-                    AbstractSection section;
-
-                    String value = rss.getString("value");
-
-                    switch (type) {
-                        case OBJECTIVE:
-                        case PERSONAL:
-                            section = new TextSection(value);
-                            break;
-                        case ACHIEVEMENT:
-                        case QUALIFICATIONS:
-                            section = new ListSection(new ArrayList<>(Arrays.asList(value.split("\n"))));
-                            break;
-                        default:
-                            throw new SQLException("Undefined section type");
-                    }
-
-                    sectionsData.put(type, section);
-                }
-
-                return sectionsData;
-            }, null);
-
-            resume.setContacts(contacts);
-            resume.setSections(sections);
-            resumes.add(resume);
-        }
-
-        return resumes;
+        return new ArrayList<>();
     }
 
     private void addContacts(Connection conn, Resume resume) throws SQLException {
@@ -174,14 +190,7 @@ public class SqlStorage implements Storage {
                             break;
                         case ACHIEVEMENT:
                         case QUALIFICATIONS:
-                            StringBuilder value = new StringBuilder();
-
-                            for (String item: ((ListSection) entry.getValue()).getItems()) {
-                                value.append(item).append("\n");
-                            }
-
-                            ps.setString(3, value.toString());
-
+                            ps.setString(3, String.join("\n", ((ListSection) entry.getValue()).getItems()));
                             break;
                         default:
                             throw new SQLException("Undefined section type");
@@ -226,6 +235,19 @@ public class SqlStorage implements Storage {
             if (ps.executeUpdate() == 0) {
                 throw new NotExistedStorageException(resume.getUuid());
             }
+        }
+    }
+
+    private AbstractSection getSectionByType(SectionType type, String value) throws SQLException {
+        switch (type) {
+            case OBJECTIVE:
+            case PERSONAL:
+                return new TextSection(value);
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                return new ListSection(new ArrayList<>(Arrays.asList(value.split("\n"))));
+            default:
+                throw new SQLException("Undefined section type");
         }
     }
 }
