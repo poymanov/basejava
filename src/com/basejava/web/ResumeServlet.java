@@ -3,15 +3,19 @@ package com.basejava.web;
 import com.basejava.Config;
 import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.Resume;
-import com.basejava.storage.AbstractStorage;
 import com.basejava.storage.SqlStorage;
 
+import javax.servlet.ServletConfig;
 import java.io.IOException;
 
 public class ResumeServlet extends javax.servlet.http.HttpServlet {
+    private static final SqlStorage STORAGE = new SqlStorage(Config.get().getDbUrl(), Config.get().getDbUser(), Config.get().getDbPassword());
 
-    protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-
+    public void init(ServletConfig config) {
+        STORAGE.clear();
+        STORAGE.save(new Resume("uuid1", "Test Name"));
+        STORAGE.save(new Resume("uuid2", "Test Name 2"));
+        STORAGE.save(new Resume("uuid3", "Test Name 3"));
     }
 
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
@@ -34,23 +38,17 @@ public class ResumeServlet extends javax.servlet.http.HttpServlet {
 
     private String getTableContent(String uuid) {
         StringBuilder tableContent = new StringBuilder();
-        SqlStorage storage = new SqlStorage(Config.get().getDbUrl(), Config.get().getDbUser(), Config.get().getDbPassword());
-        storage.clear();
-
-        storage.save(new Resume("uuid1", "Test Name"));
-        storage.save(new Resume("uuid2", "Test Name 2"));
-        storage.save(new Resume("uuid3", "Test Name 3"));
 
         if (uuid != null) {
             try {
-                Resume resume = storage.get(uuid);
+                Resume resume = STORAGE.get(uuid);
                 String resumeRow = "<tr><td>" + resume.getUuid() + "</td><td>" + resume.getFullName() + "</td></tr>";
                 tableContent.append(resumeRow);
             } catch (NotExistedStorageException e) {
                 System.out.println(e.getMessage());
             }
         } else {
-            for (Resume resume : storage.getAllSorted()) {
+            for (Resume resume : STORAGE.getAllSorted()) {
                 String resumeRow = "<tr><td>" + resume.getUuid() + "</td><td>" + resume.getFullName() + "</td></tr>";
                 tableContent.append(resumeRow);
             }
