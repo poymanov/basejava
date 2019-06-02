@@ -13,9 +13,24 @@
 <main>
     <div class='container'>
         <h1>Resume - ${resume.uuid}</h1>
+        <div class="mb-2">
+            <a href="resume?uuid=${resume.uuid}&action=edit" class="btn btn-success">Edit</a>
+            <a href="resume?uuid=${resume.uuid}&action=delete" class="btn btn-danger">Delete</a>
+        </div>
         <ul>
             <li><strong>Full Name:</strong> ${resume.fullName}</li>
         </ul>
+        <c:if test="${resume.contacts.size() > 0}">
+            <h2>Contacts</h2>
+            <ul>
+                <c:forEach var="contactEntry" items="${resume.contacts}">
+                    <jsp:useBean id="contactEntry" type="java.util.Map.Entry<com.basejava.model.ContactType, com.basejava.model.Contact>"/>
+                    <li>
+                        <strong>${contactEntry.key.title}</strong>: ${contactEntry.value.title}
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
     </div>
 </main>
 <jsp:include page="common/footer.jsp"/>

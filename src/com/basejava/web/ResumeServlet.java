@@ -1,6 +1,7 @@
 package com.basejava.web;
 
 import com.basejava.Config;
+import com.basejava.model.ContactType;
 import com.basejava.model.Resume;
 import com.basejava.storage.Storage;
 
@@ -16,13 +17,36 @@ public class ResumeServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
 
-        Resume resume = storage.get(uuid);
-        resume.setFullName(fullName);
+        Resume resume;
+        boolean isNew = false;
 
-        storage.update(resume);
+        if (uuid != null && uuid.trim().length() != 0) {
+            resume = storage.get(uuid);
+            resume.setFullName(fullName);
+        } else {
+            isNew = true;
+            resume = new Resume(fullName);
+        }
+
+        for (ContactType type: ContactType.values()) {
+            String value = request.getParameter(type.getTitle());
+            if (value != null && value.trim().length() != 0) {
+                resume.addContact(type, value);
+            } else {
+                resume.getContacts().remove(type);
+            }
+        }
+
+        if (isNew) {
+            storage.save(resume);
+        } else {
+            storage.update(resume);
+        }
+
         response.sendRedirect("resume");
     }
 
@@ -37,21 +61,31 @@ public class ResumeServlet extends HttpServlet {
         }
 
         Resume resume;
+        String template;
 
         switch (action) {
+            case "create":
+                resume = new Resume(null, null);
+                template = "/WEB-INF/jsp/edit.jsp";
+                break;
             case "delete":
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
             case "view":
+                resume = storage.get(uuid);
+                template = "/WEB-INF/jsp/view.jsp";
+                break;
             case "edit":
                 resume = storage.get(uuid);
+                template = "/WEB-INF/jsp/edit.jsp";
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
         }
 
         request.setAttribute("resume", resume);
-        request.getRequestDispatcher(action.equals("view") ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp").forward(request, response);
+
+        request.getRequestDispatcher(template).forward(request, response);
     }
 }

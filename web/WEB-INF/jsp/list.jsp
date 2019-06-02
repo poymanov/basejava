@@ -12,6 +12,9 @@
     <main>
         <div class='container'>
             <h1>Resumes</h1>
+            <div class="mb-2">
+                <a href="resume?action=create" class="btn btn-success">Create</a>
+            </div>
             <table class='table table-bordered'>
                 <tr>
                     <th>Uuid</th>
