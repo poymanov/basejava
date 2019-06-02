@@ -8,8 +8,9 @@ import java.util.*;
  */
 public class Resume implements Comparable<Resume>, Serializable {
     private static final long serialVersionUID = 1L;
-    private final String uuid;
-    private final String fullName;
+    private String uuid;
+
+    private String fullName;
     private Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
     private Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
@@ -36,6 +37,10 @@ public class Resume implements Comparable<Resume>, Serializable {
 
     public void setContacts(Map<ContactType, Contact> contacts) {
         this.contacts = contacts;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public Map<SectionType, AbstractSection> getSections() {

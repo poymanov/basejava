@@ -95,7 +95,7 @@ public class SqlStorage implements Storage {
         sqlHelper.execute(sql, (ps) -> {
             ps.setString(1, uuid);
 
-            if (!ps.execute()) {
+            if (ps.executeUpdate() == 0) {
                 throw new NotExistedStorageException(uuid);
             }
 
