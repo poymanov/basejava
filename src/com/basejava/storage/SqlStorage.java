@@ -59,7 +59,7 @@ public class SqlStorage implements Storage {
                     throw new NotExistedStorageException(uuid);
                 }
 
-                resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
+                resume = getResumeFromSet(rs);
             }
 
             try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM contacts WHERE resume_uuid = ?")) {
@@ -67,9 +67,7 @@ public class SqlStorage implements Storage {
                 ResultSet rs = ps.executeQuery();
 
                 while (rs.next()) {
-                    String type = rs.getString("type");
-                    String value = rs.getString("value");
-                    resume.addContact(ContactType.valueOf(type), value);
+                   addContactFromSet(resume, rs);
                 }
             }
 
@@ -78,9 +76,7 @@ public class SqlStorage implements Storage {
                 ResultSet rs = ps.executeQuery();
 
                 while (rs.next()) {
-                    SectionType type = SectionType.valueOf(rs.getString("type"));
-                    String value = rs.getString("value");
-                    resume.addSection(type, getSectionByType(type, value));
+                    addSectionFromSet(resume, rs);
                 }
             }
 
@@ -111,10 +107,8 @@ public class SqlStorage implements Storage {
                 ResultSet rs = ps.executeQuery();
 
                 while (rs.next()) {
-                    String uuid = rs.getString("uuid");
-                    String fullName = rs.getString("full_name");
-                    Resume resume = new Resume(uuid, fullName);
-                    resumes.put(uuid, resume);
+                    Resume resume = getResumeFromSet(rs);
+                    resumes.put(resume.getUuid(), resume);
                 }
             }
 
@@ -128,11 +122,7 @@ public class SqlStorage implements Storage {
                         continue;
                     }
 
-                    String type = rs.getString("type");
-                    String value = rs.getString("value");
-
-                    Resume resume = resumes.get(resumeUuid);
-                    resume.addContact(ContactType.valueOf(type), value);
+                    addContactFromSet(resumes.get(resumeUuid), rs);
                 }
             }
 
@@ -145,20 +135,12 @@ public class SqlStorage implements Storage {
                     if (!resumes.containsKey(resumeUuid)) {
                         continue;
                     }
-
-                    SectionType type = SectionType.valueOf(rs.getString("type"));
-                    String value = rs.getString("value");
-                    Resume resume = resumes.get(resumeUuid);
-                    resume.addSection(type, getSectionByType(type, value));
+                    addSectionFromSet(resumes.get(resumeUuid), rs);
                 }
             }
 
             return new ArrayList<>(resumes.values());
         }, null);
-    }
-
-    private List<Resume> getResumes(ResultSet rs) throws SQLException {
-        return new ArrayList<>();
     }
 
     private void addContacts(Connection conn, Resume resume) throws SQLException {
@@ -249,5 +231,21 @@ public class SqlStorage implements Storage {
             default:
                 throw new SQLException("Undefined section type");
         }
+    }
+
+    private void addSectionFromSet(Resume resume, ResultSet rs) throws SQLException {
+        SectionType type = SectionType.valueOf(rs.getString("type"));
+        String value = rs.getString("value");
+        resume.addSection(type, getSectionByType(type, value));
+    }
+
+    private void addContactFromSet(Resume resume, ResultSet rs) throws SQLException {
+        String type = rs.getString("type");
+        String value = rs.getString("value");
+        resume.addContact(ContactType.valueOf(type), value);
+    }
+
+    private Resume getResumeFromSet(ResultSet rs) throws SQLException {
+        return new Resume(rs.getString("uuid"), rs.getString("full_name"));
     }
 }
