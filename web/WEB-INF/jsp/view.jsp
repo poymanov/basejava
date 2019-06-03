@@ -24,12 +24,47 @@
             <h2>Contacts</h2>
             <ul>
                 <c:forEach var="contactEntry" items="${resume.contacts}">
-                    <jsp:useBean id="contactEntry" type="java.util.Map.Entry<com.basejava.model.ContactType, com.basejava.model.Contact>"/>
                     <li>
                         <strong>${contactEntry.key.title}</strong>: ${contactEntry.value.title}
                     </li>
                 </c:forEach>
             </ul>
+        </c:if>
+        <c:if test="${resume.sections.size() > 0}">
+            <c:forEach var="sectionEntry" items="${resume.sections}">
+                <jsp:useBean id="sectionEntry" type="java.util.Map.Entry<com.basejava.model.SectionType, com.basejava.model.AbstractSection>"/>
+                <h2>${sectionEntry.key.title}</h2>
+
+                <c:choose>
+                    <c:when test="${(sectionEntry.key.name().equals('PERSONAL') || sectionEntry.key.name().equals('OBJECTIVE'))}">
+                        ${sectionEntry.value.title}
+                    </c:when>
+                    <c:when test="${(sectionEntry.key.name().equals('ACHIEVEMENT') || sectionEntry.key.name().equals('QUALIFICATIONS'))}">
+                        <ul>
+                            <c:forEach var="item" items="${sectionEntry.value.items}">
+                                <li>${item}</li>
+                            </c:forEach>
+                        </ul>
+                    </c:when>
+                    <c:when test="${(sectionEntry.key.name().equals('EXPERIENCE') || sectionEntry.key.name().equals('EDUCATION'))}">
+                        <ul>
+                            <li>
+                                <c:forEach var="organization" items="${sectionEntry.value.items}">
+                                    <h3>${organization.title}</h3>
+                                    <ul>
+                                        <c:forEach var="position" items="${organization.items}">
+                                            <li>${position.title} (${position.periodFrom} - ${position.periodTo})<br>${position.description}</li>
+                                        </c:forEach>
+                                    </ul>
+                                </c:forEach>
+                            </li>
+                        </ul>
+                    </c:when>
+                    <c:otherwise>
+                        -
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
         </c:if>
     </div>
 </main>

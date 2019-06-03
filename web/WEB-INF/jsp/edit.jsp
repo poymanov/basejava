@@ -27,6 +27,27 @@
                     <input name="${type.title}" type="text" class="form-control" id="${type.title}" placeholder="Enter ${type.title}" value="${resume.getContact(type).getTitle()}">
                 </div>
             </c:forEach>
+
+            <c:forEach var="sectionEntry" items="${resume.sections}">
+                <jsp:useBean id="sectionEntry" type="java.util.Map.Entry<com.basejava.model.SectionType, com.basejava.model.AbstractSection>"/>
+                <h2>${sectionEntry.key.title}</h2>
+
+                <c:choose>
+                    <c:when test="${(sectionEntry.key.name().equals('PERSONAL') || sectionEntry.key.name().equals('OBJECTIVE'))}">
+                        <div class="form-group">
+                            <input name="${sectionEntry.key.name()}" type="text" class="form-control" placeholder="Enter ${sectionEntry.key.name()}" value="${sectionEntry.value.title}">
+                        </div>
+                    </c:when>
+                    <c:when test="${(sectionEntry.key.name().equals('ACHIEVEMENT') || sectionEntry.key.name().equals('QUALIFICATIONS'))}">
+                        <c:forEach var="item" items="${sectionEntry.value.items}">
+                            <div class="form-group">
+                                <input name="${sectionEntry.key.name()}" type="text" class="form-control" placeholder="Enter ${sectionEntry.key.name()}" value="${item}">
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                </c:choose>
+            </c:forEach>
+
             <button type="submit" class="btn btn-primary">Submit</button>
             <button class="btn btn-success" onclick="window.history.back()">Back</button>
         </form>
