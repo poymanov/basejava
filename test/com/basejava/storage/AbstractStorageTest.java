@@ -53,28 +53,31 @@ public abstract class AbstractStorageTest {
 
         RESUME_3.addSection(SectionType.QUALIFICATIONS, new ListSection(qualificationsData));
 
-//        Organization organization1 = new Organization("Title 1", "http://test.test", new ArrayList<Position>() {{
-//            add(new Position("Title 1.1", LocalDate.of(2019, 10, 1), null));
-//            add(new Position("Title 1.2", "Description 1.2",
-//                    LocalDate.of(2019, 8, 1), LocalDate.of(2019, 9, 1)));
-//        }});
-//
-//        ArrayList<Organization> experienceList = new ArrayList<>();
-//        experienceList.add(organization1);
-//
-//        RESUME_3.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceList));
-//
-//        Organization organization2 = new Organization("Title 2", new ArrayList<Position>() {{
-//            add(new Position("Title 2.1", "Description 2.1",
-//                    LocalDate.of(2019, 8, 1), null));
-//            add(new Position("Title 2.2",
-//                    LocalDate.of(2019, 6, 1), LocalDate.of(2019, 7, 1)));
-//        }});
-//
-//        ArrayList<Organization> educationList = new ArrayList<>();
-//        educationList.add(organization2);
-//
-//        RESUME_3.addSection(SectionType.EDUCATION, new OrganizationSection(educationList));
+
+        ArrayList<Position> positions1 =  new ArrayList<>();
+        positions1.add(new Position("Title 1.1", LocalDate.of(2019, 10, 1), null));
+        positions1.add(new Position("Title 1.2", "Description 1.2",
+                LocalDate.of(2019, 8, 1), LocalDate.of(2019, 9, 1)));
+
+        Organization organization1 = new Organization("Title 1", "http://test.test", positions1);
+
+        ArrayList<Organization> experienceList = new ArrayList<>();
+        experienceList.add(organization1);
+
+        RESUME_3.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceList));
+
+        ArrayList<Position> positions2 = new ArrayList<>();
+        positions2.add(new Position("Title 2.1", "Description 2.1",
+                LocalDate.of(2019, 8, 1), null));
+        positions2.add(new Position("Title 2.2",
+                LocalDate.of(2019, 6, 1), LocalDate.of(2019, 7, 1)));
+
+        Organization organization2 = new Organization("Title 2", positions2);
+
+        ArrayList<Organization> educationList = new ArrayList<>();
+        educationList.add(organization2);
+
+        RESUME_3.addSection(SectionType.EDUCATION, new OrganizationSection(educationList));
 
         RESUME_4 = new Resume(UUID_4, "Test Name 4");
     }
@@ -154,7 +157,7 @@ public abstract class AbstractStorageTest {
 
         resume = storage.get(UUID_3);
 
-        assertEquals(3, resume.getSections().size());
+        assertEquals(5, resume.getSections().size());
         assertNull(resume.getSections().get(SectionType.ACHIEVEMENT));
 
         resume.getSections().clear();

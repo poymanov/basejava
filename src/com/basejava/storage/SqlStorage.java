@@ -3,6 +3,7 @@ package com.basejava.storage;
 import com.basejava.exceptions.NotExistedStorageException;
 import com.basejava.model.*;
 import com.basejava.sql.SqlHelper;
+import com.basejava.util.JsonParser;
 
 import java.sql.*;
 import java.util.*;
@@ -169,20 +170,7 @@ public class SqlStorage implements Storage {
                 for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
                     ps.setString(1, resume.getUuid());
                     ps.setString(2, entry.getKey().name());
-
-                    switch (entry.getKey()) {
-                        case OBJECTIVE:
-                        case PERSONAL:
-                            ps.setString(3, ((TextSection) entry.getValue()).getTitle());
-                            break;
-                        case ACHIEVEMENT:
-                        case QUALIFICATIONS:
-                            ps.setString(3, String.join("\n", ((ListSection) entry.getValue()).getItems()));
-                            break;
-                        default:
-                            throw new SQLException("Undefined section type");
-                    }
-
+                    ps.setString(3, JsonParser.write(entry.getValue(), AbstractSection.class));
                     ps.addBatch();
                 }
 
@@ -225,23 +213,10 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private AbstractSection getSectionByType(SectionType type, String value) throws SQLException {
-        switch (type) {
-            case OBJECTIVE:
-            case PERSONAL:
-                return new TextSection(value);
-            case ACHIEVEMENT:
-            case QUALIFICATIONS:
-                return new ListSection(new ArrayList<>(Arrays.asList(value.split("\n"))));
-            default:
-                throw new SQLException("Undefined section type");
-        }
-    }
-
     private void addSectionFromSet(Resume resume, ResultSet rs) throws SQLException {
         SectionType type = SectionType.valueOf(rs.getString("type"));
         String value = rs.getString("value");
-        resume.addSection(type, getSectionByType(type, value));
+        resume.addSection(type, JsonParser.read(value, AbstractSection.class));
     }
 
     private void addContactFromSet(Resume resume, ResultSet rs) throws SQLException {
