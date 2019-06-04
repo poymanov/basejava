@@ -21,10 +21,6 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         String uuid = request.getParameter("uuid");
-        String sectionPersonal = request.getParameter("PERSONAL");
-        String sectionObjective = request.getParameter("OBJECTIVE");
-        String[] sectionAchievements = request.getParameterValues("ACHIEVEMENT");
-        String[] sectionQualifications = request.getParameterValues("QUALIFICATIONS");
         String fullName = request.getParameter("fullName");
 
         Resume resume;
@@ -47,28 +43,35 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
-        if (sectionPersonal != null && sectionPersonal.trim().length() != 0) {
-            resume.addSection(SectionType.PERSONAL, new TextSection(sectionPersonal));
-        } else {
-            resume.getSections().remove(SectionType.PERSONAL);
-        }
+        for (SectionType type: SectionType.values()) {
+            switch (type) {
+                case OBJECTIVE:
+                case PERSONAL:
+                    String value = request.getParameter(type.name());
 
-        if (sectionObjective != null && sectionObjective.trim().length() != 0) {
-            resume.addSection(SectionType.OBJECTIVE, new TextSection(sectionObjective));
-        } else {
-            resume.getSections().remove(SectionType.OBJECTIVE);
-        }
+                    if (value != null && value.trim().length() != 0) {
+                        resume.addSection(type, new TextSection(value));
+                    } else {
+                        deleteSectionIfNotExist(resume, type);
+                    }
+                    break;
+                case ACHIEVEMENT:
+                case QUALIFICATIONS:
+                    String[] values = request.getParameterValues(type.name());
 
-        if (sectionAchievements.length > 0) {
-            resume.addSection(SectionType.ACHIEVEMENT, new ListSection(new ArrayList<>(Arrays.asList(sectionAchievements))));
-        } else {
-            resume.getSections().remove(SectionType.ACHIEVEMENT);
-        }
+                    if (values != null) {
+                        resume.addSection(type, new ListSection(new ArrayList<>(Arrays.asList(values))));
+                    } else {
+                        deleteSectionIfNotExist(resume, type);
+                    }
 
-        if (sectionQualifications.length > 0) {
-            resume.addSection(SectionType.QUALIFICATIONS, new ListSection(new ArrayList<>(Arrays.asList(sectionQualifications))));
-        } else {
-            resume.getSections().remove(SectionType.QUALIFICATIONS);
+                    break;
+                case EXPERIENCE:
+                case EDUCATION:
+                    break;
+                default:
+                    break;
+            }
         }
 
         if (isNew) {
@@ -117,5 +120,11 @@ public class ResumeServlet extends HttpServlet {
         request.setAttribute("resume", resume);
 
         request.getRequestDispatcher(template).forward(request, response);
+    }
+
+    private void deleteSectionIfNotExist(Resume resume, SectionType type) {
+        if (resume.getSections().get(type) != null) {
+            resume.getSections().remove(type);
+        }
     }
 }

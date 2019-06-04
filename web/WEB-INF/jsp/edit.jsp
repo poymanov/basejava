@@ -1,4 +1,5 @@
 <%@ page import="com.basejava.model.ContactType" %>
+<%@ page import="com.basejava.model.SectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -28,25 +29,49 @@
                 </div>
             </c:forEach>
 
-            <c:forEach var="sectionEntry" items="${resume.sections}">
-                <jsp:useBean id="sectionEntry" type="java.util.Map.Entry<com.basejava.model.SectionType, com.basejava.model.AbstractSection>"/>
-                <h2>${sectionEntry.key.title}</h2>
+            <div>
+                <h2>${SectionType.PERSONAL.title}</h2>
+                <div class="form-group">
+                    <input name="${SectionType.PERSONAL.name()}" type="text" class="form-control" placeholder="Enter value" value="${resume.sections.get(SectionType.PERSONAL).title}">
+                </div>
+            </div>
 
-                <c:choose>
-                    <c:when test="${(sectionEntry.key.name().equals('PERSONAL') || sectionEntry.key.name().equals('OBJECTIVE'))}">
-                        <div class="form-group">
-                            <input name="${sectionEntry.key.name()}" type="text" class="form-control" placeholder="Enter ${sectionEntry.key.name()}" value="${sectionEntry.value.title}">
+            <div>
+                <h2>${SectionType.OBJECTIVE.title}</h2>
+                <div class="form-group">
+                    <input name="${SectionType.OBJECTIVE.name()}" type="text" class="form-control" placeholder="Enter value" value="${resume.sections.get(SectionType.OBJECTIVE).title}">
+                </div>
+            </div>
+
+            <div class="list-block">
+                <h2>${SectionType.ACHIEVEMENT.title}</h2>
+
+                <button type="button" class="btn btn-success add-input-list mb-2" data-type="${SectionType.ACHIEVEMENT.name()}"><span class="oi oi-plus"></span></button>
+
+                <div class="inputs">
+                    <c:forEach var="item" items="${resume.sections.get(SectionType.ACHIEVEMENT).items}">
+                        <div class="form-group d-flex">
+                            <input name="${SectionType.ACHIEVEMENT.name()}" type="text" class="form-control" placeholder="Enter value" value="${item}">
+                            <button type="button" class="btn btn-danger delete-input"><span class="oi oi-trash"></span></button>
                         </div>
-                    </c:when>
-                    <c:when test="${(sectionEntry.key.name().equals('ACHIEVEMENT') || sectionEntry.key.name().equals('QUALIFICATIONS'))}">
-                        <c:forEach var="item" items="${sectionEntry.value.items}">
-                            <div class="form-group">
-                                <input name="${sectionEntry.key.name()}" type="text" class="form-control" placeholder="Enter ${sectionEntry.key.name()}" value="${item}">
-                            </div>
-                        </c:forEach>
-                    </c:when>
-                </c:choose>
-            </c:forEach>
+                    </c:forEach>
+                </div>
+            </div>
+
+            <div class="list-block">
+                <h2>${SectionType.QUALIFICATIONS.title}</h2>
+
+                <button type="button" class="btn btn-success add-input-list mb-2" data-type="${SectionType.QUALIFICATIONS.name()}"><span class="oi oi-plus"></span></button>
+
+                <div class="inputs">
+                    <c:forEach var="item" items="${resume.sections.get(SectionType.QUALIFICATIONS).items}">
+                        <div class="form-group d-flex">
+                            <input name="${SectionType.QUALIFICATIONS.name()}" type="text" class="form-control" placeholder="Enter value" value="${item}">
+                            <button type="button" class="btn btn-danger delete-input"><span class="oi oi-trash"></span></button>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
             <button class="btn btn-success" onclick="window.history.back()">Back</button>
@@ -54,5 +79,10 @@
     </div>
 </main>
 <jsp:include page="common/footer.jsp"/>
+<script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>
