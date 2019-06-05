@@ -21,56 +21,49 @@
                 <label for="fullName">Full Name</label>
                 <input name="fullName" type="text" class="form-control" id="fullName" placeholder="Enter Full Name" value="${resume.fullName}">
             </div>
-            <h2>Contacts</h2>
-            <c:forEach var="type" items="<%=ContactType.values()%>">
-                <div class="form-group">
-                    <label for="${type.title}">${type.title}</label>
-                    <input name="${type.title}" type="text" class="form-control" id="${type.title}" placeholder="Enter ${type.title}" value="${resume.getContact(type).getTitle()}">
-                </div>
-            </c:forEach>
 
             <div>
-                <h2>${SectionType.PERSONAL.title}</h2>
-                <div class="form-group">
-                    <input name="${SectionType.PERSONAL.name()}" type="text" class="form-control" placeholder="Enter value" value="${resume.sections.get(SectionType.PERSONAL).title}">
-                </div>
+                <h2>Contacts</h2>
+                <c:forEach var="type" items="<%=ContactType.values()%>">
+                    <div class="form-group">
+                        <label for="${type.title}">${type.title}</label>
+                        <input name="${type.title}" type="text" class="form-control" id="${type.title}" placeholder="Enter ${type.title}" value="${resume.getContact(type).title}">
+                    </div>
+                </c:forEach>
             </div>
 
             <div>
-                <h2>${SectionType.OBJECTIVE.title}</h2>
-                <div class="form-group">
-                    <input name="${SectionType.OBJECTIVE.name()}" type="text" class="form-control" placeholder="Enter value" value="${resume.sections.get(SectionType.OBJECTIVE).title}">
-                </div>
-            </div>
+                <c:forEach var="type" items="<%=SectionType.values()%>">
+                    <h2>${type.title}</h2>
 
-            <div class="list-block">
-                <h2>${SectionType.ACHIEVEMENT.title}</h2>
+                    <c:choose>
+                        <c:when test = "${type == SectionType.PERSONAL || type == SectionType.OBJECTIVE}">
+                            <div class="form-group">
+                                <input name="${type.name()}" type="text" class="form-control" placeholder="Enter value" value="${resume.sections.get(type).title}">
+                            </div>
+                        </c:when>
 
-                <button type="button" class="btn btn-success add-input-list mb-2" data-type="${SectionType.ACHIEVEMENT.name()}"><span class="oi oi-plus"></span></button>
+                        <c:when test = "${type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS}">
+                            <div class="list-block">
+                                <button type="button" class="btn btn-success add-input-list mb-2" data-type="${SectionType.ACHIEVEMENT.name()}"><span class="oi oi-plus"></span></button>
 
-                <div class="inputs">
-                    <c:forEach var="item" items="${resume.sections.get(SectionType.ACHIEVEMENT).items}">
-                        <div class="form-group d-flex">
-                            <input name="${SectionType.ACHIEVEMENT.name()}" type="text" class="form-control" placeholder="Enter value" value="${item}">
-                            <button type="button" class="btn btn-danger delete-input"><span class="oi oi-trash"></span></button>
-                        </div>
-                    </c:forEach>
-                </div>
-            </div>
+                                <div class="inputs">
+                                    <c:forEach var="item" items="${resume.sections.get(type).items}">
+                                        <div class="form-group d-flex">
+                                            <input name="${type.name()}" type="text" class="form-control" placeholder="Enter value" value="${item}">
+                                            <button type="button" class="btn btn-danger delete-input"><span class="oi oi-trash"></span></button>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </c:when>
 
-            <div class="list-block">
-                <h2>${SectionType.QUALIFICATIONS.title}</h2>
+                        <c:otherwise>
+                            -
+                        </c:otherwise>
+                    </c:choose>
 
-                <button type="button" class="btn btn-success add-input-list mb-2" data-type="${SectionType.QUALIFICATIONS.name()}"><span class="oi oi-plus"></span></button>
-
-                <div class="inputs">
-                    <c:forEach var="item" items="${resume.sections.get(SectionType.QUALIFICATIONS).items}">
-                        <div class="form-group d-flex">
-                            <input name="${SectionType.QUALIFICATIONS.name()}" type="text" class="form-control" placeholder="Enter value" value="${item}">
-                            <button type="button" class="btn btn-danger delete-input"><span class="oi oi-trash"></span></button>
-                        </div>
-                    </c:forEach>
-                </div>
+                </c:forEach>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
