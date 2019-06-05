@@ -50,8 +50,45 @@
                                 <div class="inputs">
                                     <c:forEach var="item" items="${resume.sections.get(type).items}">
                                         <div class="form-group d-flex">
-                                            <input name="${type.name()}" type="text" class="form-control" placeholder="Enter value" value="${item}">
+                                            <input name="${type.name()}" type="text" class="form-control mr-2" placeholder="Enter value" value="${item}">
                                             <button type="button" class="btn btn-danger delete-input"><span class="oi oi-trash"></span></button>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </c:when>
+
+                        <c:when test = "${type == SectionType.EDUCATION || type == SectionType.EXPERIENCE}">
+                            <div class="organization-block">
+                                <button type="button" class="btn btn-success add-organization mb-2" data-type="${type.name()}"><span class="oi oi-plus"></span></button>
+                                <div class="organizations-list">
+                                    <c:forEach var="organization" items="${resume.sections.get(type).items}">
+                                        <div class="organization form-group">
+                                            <div class="d-flex mb-3">
+                                                <input name="${type.name()}" type="text" placeholder="Title" class="form-control mr-2" value="${organization.title}" required>
+                                                <button type="button" class="btn btn-danger delete-organization"><span class="oi oi-trash"></span></button>
+                                            </div>
+                                            <div class="positions pl-4">
+                                                <div class="positions-list">
+                                                    <c:forEach var="position" items="${organization.items}">
+                                                        <div class="position">
+                                                            <div class="d-flex mb-2">
+                                                                <button type="button" class="btn btn-danger delete-position mr-2"><span class="oi oi-trash"></span></button>
+                                                                <input name="${type.name()}" type="text" placeholder="Title" class="form-control mr-2" value="${position.title}" required>
+                                                                <input name="${type.name()}" type="date" placeholder="Period from" class="form-control mr-2" value="${position.periodFrom}" required>
+                                                                <input name="${type.name()}" type="date" placeholder="Period to" class="form-control" value="${position.periodTo}">
+                                                            </div>
+                                                            <div>
+                                                                <textarea name="${type.name()}" class="form-control" rows="5">${position.description}</textarea>
+                                                            </div>
+                                                            <input name="${type.name()}" type="hidden" value="---">
+                                                            <hr>
+                                                        </div>
+                                                    </c:forEach>
+                                                </div>
+                                                <input name="${type.name()}" type="hidden" value="-">
+                                                <button type="button" class="btn btn-success add-position" data-type="${type.name()}"><span class="oi oi-plus"></span></button>
+                                            </div>
                                         </div>
                                     </c:forEach>
                                 </div>

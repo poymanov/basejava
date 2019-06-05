@@ -11,8 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage = Config.get().getStorage();
@@ -57,10 +60,10 @@ public class ResumeServlet extends HttpServlet {
                     break;
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
-                    String[] values = request.getParameterValues(type.name());
+                    String[] listValues = request.getParameterValues(type.name());
 
-                    if (values != null) {
-                        resume.addSection(type, new ListSection(new ArrayList<>(Arrays.asList(values))));
+                    if (listValues != null) {
+                        resume.addSection(type, new ListSection(new ArrayList<>(Arrays.asList(listValues))));
                     } else {
                         deleteSectionIfNotExist(resume, type);
                     }
@@ -68,6 +71,54 @@ public class ResumeServlet extends HttpServlet {
                     break;
                 case EXPERIENCE:
                 case EDUCATION:
+                    String[] organizationValues = request.getParameterValues(type.name());
+
+                    if (organizationValues == null) {
+                        deleteSectionIfNotExist(resume, type);
+                    } else {
+                        int size = organizationValues.length;
+
+                        int currentItem = 0;
+                        Organization currentOrganization = null;
+                        ArrayList<Organization> organizationsList = new ArrayList<>();
+
+                        while (currentItem < size) {
+                            if (currentOrganization == null) {
+                                currentOrganization = new Organization("", new ArrayList<>());
+                                String title = organizationValues[currentItem];
+                                currentOrganization.setTitle(title);
+                                currentItem = currentItem + 1;
+                            }
+
+                            String positionTitle = organizationValues[currentItem];
+                            String periodFrom = organizationValues[currentItem + 1];
+                            String periodTo = organizationValues[currentItem + 2];
+                            String description = organizationValues[currentItem + 3];
+
+                            LocalDate periodFromDate = periodFrom.isEmpty() ? null : LocalDate.parse(periodFrom);
+                            LocalDate periodToDate = periodTo.isEmpty() ? null : LocalDate.parse(periodTo);
+
+                            Position position = new Position(positionTitle, description, periodFromDate, periodToDate);
+                            currentOrganization.getItems().add(position);
+
+                            currentItem = currentItem + 4;
+
+                            if (organizationValues[currentItem + 1].equals("-")) {
+                                organizationsList.add(currentOrganization);
+                                currentOrganization = null;
+                                currentItem = currentItem + 2;
+                            } else {
+                                currentItem = currentItem + 1;
+                            }
+
+                            if (size - currentItem < 4) {
+                                break;
+                            }
+                        }
+
+                        resume.addSection(type, new OrganizationSection(organizationsList));
+                    }
+
                     break;
                 default:
                     break;
